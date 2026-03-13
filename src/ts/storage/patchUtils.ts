@@ -10,12 +10,20 @@
  */
 export function normalizeJSON(obj: any): any {
     if (obj === null || obj === undefined) return obj;
+    if (obj instanceof Date) return obj.toISOString();
+    
     if (typeof obj !== 'object') return obj;
-    if (Array.isArray(obj)) return obj.map(normalizeJSON);
+    
+    if (Array.isArray(obj)) {
+        return obj.map(item => item === undefined ? null : normalizeJSON(item));
+    }
 
     const sorted: Record<string, any> = {};
     for (const key of Object.keys(obj).sort()) {
-        sorted[key] = normalizeJSON(obj[key]);
+        const val = obj[key];
+        if (val !== undefined && typeof val !== 'function') {
+            sorted[key] = normalizeJSON(val);
+        }
     }
     return sorted;
 }

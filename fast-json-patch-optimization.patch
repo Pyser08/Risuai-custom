@@ -1,1160 +1,1221 @@
-diff --git a/package.json b/package.json
-index 58bdaaad..0ec5a9f9 100644
---- a/package.json
-+++ b/package.json
-@@ -55,6 +55,7 @@
-     "diff": "^7.0.0",
-     "dompurify": "^3.3.1",
-     "express": "^4.22.1",
-+    "fast-json-patch": "^3.1.1",
-     "fflate": "^0.8.2",
-     "highlight.js": "^11.11.1",
-     "html-to-image": "^1.11.13",
-diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
-index c95f4184..48c35ade 100644
---- a/pnpm-lock.yaml
-+++ b/pnpm-lock.yaml
-@@ -119,6 +119,9 @@ importers:
-       express:
-         specifier: ^4.22.1
-         version: 4.22.1
-+      fast-json-patch:
-+        specifier: ^3.1.1
-+        version: 3.1.1
-       fflate:
-         specifier: ^0.8.2
-         version: 0.8.2
-@@ -550,89 +553,105 @@ packages:
-     resolution: {integrity: sha512-excjX8DfsIcJ10x1Kzr4RcWe1edC9PquDRRPx3YVCvQv+U5p7Yin2s32ftzikXojb1PIFc/9Mt28/y+iRklkrw==}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@img/sharp-libvips-linux-arm@1.2.4':
-     resolution: {integrity: sha512-bFI7xcKFELdiNCVov8e44Ia4u2byA+l3XtsAj+Q8tfCwO6BQ8iDojYdvoPMqsKDkuoOo+X6HZA0s0q11ANMQ8A==}
-     cpu: [arm]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@img/sharp-libvips-linux-ppc64@1.2.4':
-     resolution: {integrity: sha512-FMuvGijLDYG6lW+b/UvyilUWu5Ayu+3r2d1S8notiGCIyYU/76eig1UfMmkZ7vwgOrzKzlQbFSuQfgm7GYUPpA==}
-     cpu: [ppc64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@img/sharp-libvips-linux-riscv64@1.2.4':
-     resolution: {integrity: sha512-oVDbcR4zUC0ce82teubSm+x6ETixtKZBh/qbREIOcI3cULzDyb18Sr/Wcyx7NRQeQzOiHTNbZFF1UwPS2scyGA==}
-     cpu: [riscv64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@img/sharp-libvips-linux-s390x@1.2.4':
-     resolution: {integrity: sha512-qmp9VrzgPgMoGZyPvrQHqk02uyjA0/QrTO26Tqk6l4ZV0MPWIW6LTkqOIov+J1yEu7MbFQaDpwdwJKhbJvuRxQ==}
-     cpu: [s390x]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@img/sharp-libvips-linux-x64@1.2.4':
-     resolution: {integrity: sha512-tJxiiLsmHc9Ax1bz3oaOYBURTXGIRDODBqhveVHonrHJ9/+k89qbLl0bcJns+e4t4rvaNBxaEZsFtSfAdquPrw==}
-     cpu: [x64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@img/sharp-libvips-linuxmusl-arm64@1.2.4':
-     resolution: {integrity: sha512-FVQHuwx1IIuNow9QAbYUzJ+En8KcVm9Lk5+uGUQJHaZmMECZmOlix9HnH7n1TRkXMS0pGxIJokIVB9SuqZGGXw==}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@img/sharp-libvips-linuxmusl-x64@1.2.4':
-     resolution: {integrity: sha512-+LpyBk7L44ZIXwz/VYfglaX/okxezESc6UxDSoyo2Ks6Jxc4Y7sGjpgU9s4PMgqgjj1gZCylTieNamqA1MF7Dg==}
-     cpu: [x64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@img/sharp-linux-arm64@0.34.5':
-     resolution: {integrity: sha512-bKQzaJRY/bkPOXyKx5EVup7qkaojECG6NLYswgktOZjaXecSAeCWiZwwiFf3/Y+O1HrauiE3FVsGxFg8c24rZg==}
-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@img/sharp-linux-arm@0.34.5':
-     resolution: {integrity: sha512-9dLqsvwtg1uuXBGZKsxem9595+ujv0sJ6Vi8wcTANSFpwV/GONat5eCkzQo/1O6zRIkh0m/8+5BjrRr7jDUSZw==}
-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-     cpu: [arm]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@img/sharp-linux-ppc64@0.34.5':
-     resolution: {integrity: sha512-7zznwNaqW6YtsfrGGDA6BRkISKAAE1Jo0QdpNYXNMHu2+0dTrPflTLNkpc8l7MUP5M16ZJcUvysVWWrMefZquA==}
-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-     cpu: [ppc64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@img/sharp-linux-riscv64@0.34.5':
-     resolution: {integrity: sha512-51gJuLPTKa7piYPaVs8GmByo7/U7/7TZOq+cnXJIHZKavIRHAP77e3N2HEl3dgiqdD/w0yUfiJnII77PuDDFdw==}
-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-     cpu: [riscv64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@img/sharp-linux-s390x@0.34.5':
-     resolution: {integrity: sha512-nQtCk0PdKfho3eC5MrbQoigJ2gd1CgddUMkabUj+rBevs8tZ2cULOx46E7oyX+04WGfABgIwmMC0VqieTiR4jg==}
-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-     cpu: [s390x]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@img/sharp-linux-x64@0.34.5':
-     resolution: {integrity: sha512-MEzd8HPKxVxVenwAa+JRPwEC7QFjoPWuS5NZnBt6B3pu7EG2Ge0id1oLHZpPJdn3OQK+BQDiw9zStiHBTJQQQQ==}
-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-     cpu: [x64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@img/sharp-linuxmusl-arm64@0.34.5':
-     resolution: {integrity: sha512-fprJR6GtRsMt6Kyfq44IsChVZeGN97gTD331weR1ex1c1rypDEABN6Tm2xa1wE6lYb5DdEnk03NZPqA7Id21yg==}
-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@img/sharp-linuxmusl-x64@0.34.5':
-     resolution: {integrity: sha512-Jg8wNT1MUzIvhBFxViqrEhWDGzqymo3sV7z7ZsaWbZNDLXRJZoRGrjulp60YYtV4wfY8VIKcWidjojlLcWrd8Q==}
-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
-     cpu: [x64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@img/sharp-wasm32@0.34.5':
-     resolution: {integrity: sha512-OdWTEiVkY2PHwqkbBI8frFxQQFekHaSSkUIJkwzclWZe64O1X4UlUjqqqLaPbUpMOQk6FBu/HtlGXNblIs0huw==}
-@@ -763,30 +782,35 @@ packages:
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@napi-rs/canvas-linux-arm64-musl@0.1.86':
-     resolution: {integrity: sha512-jbXuh8zVFUPw6a9SGpgc6EC+fRbGGyP1NFfeQiVqGLs6bN93ROtPLPL6MH9Bp6yt0CXUFallk2vgKdWDbmW+bw==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@napi-rs/canvas-linux-riscv64-gnu@0.1.86':
-     resolution: {integrity: sha512-9IwHR2qbq2HceM9fgwyL7x37Jy3ptt1uxvikQEuWR0FisIx9QEdt7F3huljCky76aoouF2vSd0R2fHo3ESRoPw==}
-     engines: {node: '>= 10'}
-     cpu: [riscv64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@napi-rs/canvas-linux-x64-gnu@0.1.86':
-     resolution: {integrity: sha512-Jor+rhRN6ubix+D2QkNn9XlPPVAYl+2qFrkZ4oZN9UgtqIUZ+n+HljxhlkkDFRaX1mlxXOXPQjxaZg17zDSFcQ==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@napi-rs/canvas-linux-x64-musl@0.1.86':
-     resolution: {integrity: sha512-A28VTy91DbclopSGZ2tIon3p8hcVI1JhnNpDpJ5N9rYlUnVz1WQo4waEMh+FICTZF07O3coxBNZc4Vu4doFw7A==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@napi-rs/canvas-win32-arm64-msvc@0.1.86':
-     resolution: {integrity: sha512-q6G1YXUt3gBCAS2bcDMCaBL4y20di8eVVBi1XhjUqZSVyZZxxwIuRQHy31NlPJUCMiyNiMuc6zeI0uqgkWwAmA==}
-@@ -892,56 +916,67 @@ packages:
-     resolution: {integrity: sha512-EHMUcDwhtdRGlXZsGSIuXSYwD5kOT9NVnx9sqzYiwAc91wfYOE1g1djOEDseZJKKqtHAHGwnGPQu3kytmfaXLQ==}
-     cpu: [arm]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@rollup/rollup-linux-arm-musleabihf@4.54.0':
-     resolution: {integrity: sha512-+pBrqEjaakN2ySv5RVrj/qLytYhPKEUwk+e3SFU5jTLHIcAtqh2rLrd/OkbNuHJpsBgxsD8ccJt5ga/SeG0JmA==}
-     cpu: [arm]
-     os: [linux]
-+    libc: [musl]
- 
-   '@rollup/rollup-linux-arm64-gnu@4.54.0':
-     resolution: {integrity: sha512-NSqc7rE9wuUaRBsBp5ckQ5CVz5aIRKCwsoa6WMF7G01sX3/qHUw/z4pv+D+ahL1EIKy6Enpcnz1RY8pf7bjwng==}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@rollup/rollup-linux-arm64-musl@4.54.0':
-     resolution: {integrity: sha512-gr5vDbg3Bakga5kbdpqx81m2n9IX8M6gIMlQQIXiLTNeQW6CucvuInJ91EuCJ/JYvc+rcLLsDFcfAD1K7fMofg==}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@rollup/rollup-linux-loong64-gnu@4.54.0':
-     resolution: {integrity: sha512-gsrtB1NA3ZYj2vq0Rzkylo9ylCtW/PhpLEivlgWe0bpgtX5+9j9EZa0wtZiCjgu6zmSeZWyI/e2YRX1URozpIw==}
-     cpu: [loong64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@rollup/rollup-linux-ppc64-gnu@4.54.0':
-     resolution: {integrity: sha512-y3qNOfTBStmFNq+t4s7Tmc9hW2ENtPg8FeUD/VShI7rKxNW7O4fFeaYbMsd3tpFlIg1Q8IapFgy7Q9i2BqeBvA==}
-     cpu: [ppc64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@rollup/rollup-linux-riscv64-gnu@4.54.0':
-     resolution: {integrity: sha512-89sepv7h2lIVPsFma8iwmccN7Yjjtgz0Rj/Ou6fEqg3HDhpCa+Et+YSufy27i6b0Wav69Qv4WBNl3Rs6pwhebQ==}
-     cpu: [riscv64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@rollup/rollup-linux-riscv64-musl@4.54.0':
-     resolution: {integrity: sha512-ZcU77ieh0M2Q8Ur7D5X7KvK+UxbXeDHwiOt/CPSBTI1fBmeDMivW0dPkdqkT4rOgDjrDDBUed9x4EgraIKoR2A==}
-     cpu: [riscv64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@rollup/rollup-linux-s390x-gnu@4.54.0':
-     resolution: {integrity: sha512-2AdWy5RdDF5+4YfG/YesGDDtbyJlC9LHmL6rZw6FurBJ5n4vFGupsOBGfwMRjBYH7qRQowT8D/U4LoSvVwOhSQ==}
-     cpu: [s390x]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@rollup/rollup-linux-x64-gnu@4.54.0':
-     resolution: {integrity: sha512-WGt5J8Ij/rvyqpFexxk3ffKqqbLf9AqrTBbWDk7ApGUzaIs6V+s2s84kAxklFwmMF/vBNGrVdYgbblCOFFezMQ==}
-     cpu: [x64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@rollup/rollup-linux-x64-musl@4.54.0':
-     resolution: {integrity: sha512-JzQmb38ATzHjxlPHuTH6tE7ojnMKM2kYNzt44LO/jJi8BpceEC8QuXYA908n8r3CNuG/B3BV8VR3Hi1rYtmPiw==}
-     cpu: [x64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@rollup/rollup-openharmony-arm64@4.54.0':
-     resolution: {integrity: sha512-huT3fd0iC7jigGh7n3q/+lfPcXxBi+om/Rs3yiFxjvSxbSB6aohDFXbWvlspaqjeOh+hx7DDHS+5Es5qRkWkZg==}
-@@ -1054,24 +1089,28 @@ packages:
-     engines: {node: '>=10'}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@swc/core-linux-arm64-musl@1.5.7':
-     resolution: {integrity: sha512-+NDhK+IFTiVK1/o7EXdCeF2hEzCiaRSrb9zD7X2Z7inwWlxAntcSuzZW7Y6BRqGQH89KA91qYgwbnjgTQ22PiQ==}
-     engines: {node: '>=10'}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@swc/core-linux-x64-gnu@1.5.7':
-     resolution: {integrity: sha512-25GXpJmeFxKB+7pbY7YQLhWWjkYlR+kHz5I3j9WRl3Lp4v4UD67OGXwPe+DIcHqcouA1fhLhsgHJWtsaNOMBNg==}
-     engines: {node: '>=10'}
-     cpu: [x64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@swc/core-linux-x64-musl@1.5.7':
-     resolution: {integrity: sha512-0VN9Y5EAPBESmSPPsCJzplZHV26akC0sIgd3Hc/7S/1GkSMoeuVL+V9vt+F/cCuzr4VidzSkqftdP3qEIsXSpg==}
-     engines: {node: '>=10'}
-     cpu: [x64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@swc/core-win32-arm64-msvc@1.5.7':
-     resolution: {integrity: sha512-RtoNnstBwy5VloNCvmvYNApkTmuCe4sNcoYWpmY7C1+bPR+6SOo8im1G6/FpNem8AR5fcZCmXHWQ+EUmRWJyuA==}
-@@ -1144,24 +1183,28 @@ packages:
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@tailwindcss/oxide-linux-arm64-musl@4.1.18':
-     resolution: {integrity: sha512-1px92582HkPQlaaCkdRcio71p8bc8i/ap5807tPRDK/uw953cauQBT8c5tVGkOwrHMfc2Yh6UuxaH4vtTjGvHg==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@tailwindcss/oxide-linux-x64-gnu@4.1.18':
-     resolution: {integrity: sha512-v3gyT0ivkfBLoZGF9LyHmts0Isc8jHZyVcbzio6Wpzifg/+5ZJpDiRiUhDLkcr7f/r38SWNe7ucxmGW3j3Kb/g==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@tailwindcss/oxide-linux-x64-musl@4.1.18':
-     resolution: {integrity: sha512-bhJ2y2OQNlcRwwgOAGMY0xTFStt4/wyU6pvI6LSuZpRgKQwxTec0/3Scu91O8ir7qCR3AuepQKLU/kX99FouqQ==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@tailwindcss/oxide-wasm32-wasi@4.1.18':
-     resolution: {integrity: sha512-LffYTvPjODiP6PT16oNeUQJzNVyJl1cjIebq/rWWBF+3eDst5JGEFSc5cWxyRCJ0Mxl+KyIkqRxk1XPEs9x8TA==}
-@@ -1227,30 +1270,35 @@ packages:
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@tauri-apps/cli-linux-arm64-musl@2.5.0':
-     resolution: {integrity: sha512-rQO1HhRUQqyEaal5dUVOQruTRda/TD36s9kv1hTxZiFuSq3558lsTjAcUEnMAtBcBkps20sbyTJNMT0AwYIk8Q==}
-     engines: {node: '>= 10'}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@tauri-apps/cli-linux-riscv64-gnu@2.5.0':
-     resolution: {integrity: sha512-7oS18FN46yDxyw1zX/AxhLAd7T3GrLj3Ai6s8hZKd9qFVzrAn36ESL7d3G05s8wEtsJf26qjXnVF4qleS3dYsA==}
-     engines: {node: '>= 10'}
-     cpu: [riscv64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@tauri-apps/cli-linux-x64-gnu@2.5.0':
-     resolution: {integrity: sha512-SG5sFNL7VMmDBdIg3nO3EzNRT306HsiEQ0N90ILe3ZABYAVoPDO/ttpCO37ApLInTzrq/DLN+gOlC/mgZvLw1w==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [linux]
-+    libc: [glibc]
- 
-   '@tauri-apps/cli-linux-x64-musl@2.5.0':
-     resolution: {integrity: sha512-QXDM8zp/6v05PNWju5ELsVwF0VH1n6b5pk2E6W/jFbbiwz80Vs1lACl9pv5kEHkrxBj+aWU/03JzGuIj2g3SkQ==}
-     engines: {node: '>= 10'}
-     cpu: [x64]
-     os: [linux]
-+    libc: [musl]
- 
-   '@tauri-apps/cli-win32-arm64-msvc@2.5.0':
-     resolution: {integrity: sha512-pFSHFK6b+o9y4Un8w0gGLwVyFTZaC3P0kQ7umRt/BLDkzD5RnQ4vBM7CF8BCU5nkwmEBUCZd7Wt3TWZxe41o6Q==}
-@@ -1742,6 +1790,9 @@ packages:
-     resolution: {integrity: sha512-IE9csY7lnhxBnA8g/WI5eg/hygA6MGWJMSNfFRrBlXUciADEhS1EDB0SIsMSvzubzIlOBbVITSsypCsW717poA==}
-     engines: {node: '>=12.17.0'}
- 
-+  fast-json-patch@3.1.1:
-+    resolution: {integrity: sha512-vf6IHUX2SBcA+5/+4883dsIjpBTqmfBjmYiWK1savxQmFk4JfBMLa7ynTYOs1Rolp/T1betJxHiGD3g1Mn8lUQ==}
-+
-   fdir@6.5.0:
-     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
-     engines: {node: '>=12.0.0'}
-@@ -1942,24 +1993,28 @@ packages:
-     engines: {node: '>= 12.0.0'}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [glibc]
- 
-   lightningcss-linux-arm64-musl@1.30.2:
-     resolution: {integrity: sha512-5Vh9dGeblpTxWHpOx8iauV02popZDsCYMPIgiuw97OJ5uaDsL86cnqSFs5LZkG3ghHoX5isLgWzMs+eD1YzrnA==}
-     engines: {node: '>= 12.0.0'}
-     cpu: [arm64]
-     os: [linux]
-+    libc: [musl]
- 
-   lightningcss-linux-x64-gnu@1.30.2:
-     resolution: {integrity: sha512-Cfd46gdmj1vQ+lR6VRTTadNHu6ALuw2pKR9lYq4FnhvgBc4zWY1EtZcAc6EffShbb1MFrIPfLDXD6Xprbnni4w==}
-     engines: {node: '>= 12.0.0'}
-     cpu: [x64]
-     os: [linux]
-+    libc: [glibc]
- 
-   lightningcss-linux-x64-musl@1.30.2:
-     resolution: {integrity: sha512-XJaLUUFXb6/QG2lGIW6aIk6jKdtjtcffUT0NKvIqhSBY3hh9Ch+1LCeH80dR9q9LBjG3ewbDjnumefsLsP6aiA==}
-     engines: {node: '>= 12.0.0'}
-     cpu: [x64]
-     os: [linux]
-+    libc: [musl]
- 
-   lightningcss-win32-arm64-msvc@1.30.2:
-     resolution: {integrity: sha512-FZn+vaj7zLv//D/192WFFVA0RgHawIcHqLX9xuWiQt7P0PtdFEVaxgF9rjM/IRYHQXNnk61/H/gb2Ei+kUQ4xQ==}
-@@ -3889,6 +3944,8 @@ snapshots:
-     dependencies:
-       pure-rand: 7.0.1
- 
-+  fast-json-patch@3.1.1: {}
-+
-   fdir@6.5.0(picomatch@4.0.3):
-     optionalDependencies:
-       picomatch: 4.0.3
+diff --git a/fast-json-patch-optimization.patch b/fast-json-patch-optimization.patch
+index 3a6840cb..e69de29b 100644
+--- a/fast-json-patch-optimization.patch
++++ b/fast-json-patch-optimization.patch
+@@ -1,1160 +0,0 @@
+-diff --git a/package.json b/package.json
+-index 58bdaaad..0ec5a9f9 100644
+---- a/package.json
+-+++ b/package.json
+-@@ -55,6 +55,7 @@
+-     "diff": "^7.0.0",
+-     "dompurify": "^3.3.1",
+-     "express": "^4.22.1",
+-+    "fast-json-patch": "^3.1.1",
+-     "fflate": "^0.8.2",
+-     "highlight.js": "^11.11.1",
+-     "html-to-image": "^1.11.13",
+-diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+-index c95f4184..48c35ade 100644
+---- a/pnpm-lock.yaml
+-+++ b/pnpm-lock.yaml
+-@@ -119,6 +119,9 @@ importers:
+-       express:
+-         specifier: ^4.22.1
+-         version: 4.22.1
+-+      fast-json-patch:
+-+        specifier: ^3.1.1
+-+        version: 3.1.1
+-       fflate:
+-         specifier: ^0.8.2
+-         version: 0.8.2
+-@@ -550,89 +553,105 @@ packages:
+-     resolution: {integrity: sha512-excjX8DfsIcJ10x1Kzr4RcWe1edC9PquDRRPx3YVCvQv+U5p7Yin2s32ftzikXojb1PIFc/9Mt28/y+iRklkrw==}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@img/sharp-libvips-linux-arm@1.2.4':
+-     resolution: {integrity: sha512-bFI7xcKFELdiNCVov8e44Ia4u2byA+l3XtsAj+Q8tfCwO6BQ8iDojYdvoPMqsKDkuoOo+X6HZA0s0q11ANMQ8A==}
+-     cpu: [arm]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@img/sharp-libvips-linux-ppc64@1.2.4':
+-     resolution: {integrity: sha512-FMuvGijLDYG6lW+b/UvyilUWu5Ayu+3r2d1S8notiGCIyYU/76eig1UfMmkZ7vwgOrzKzlQbFSuQfgm7GYUPpA==}
+-     cpu: [ppc64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@img/sharp-libvips-linux-riscv64@1.2.4':
+-     resolution: {integrity: sha512-oVDbcR4zUC0ce82teubSm+x6ETixtKZBh/qbREIOcI3cULzDyb18Sr/Wcyx7NRQeQzOiHTNbZFF1UwPS2scyGA==}
+-     cpu: [riscv64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@img/sharp-libvips-linux-s390x@1.2.4':
+-     resolution: {integrity: sha512-qmp9VrzgPgMoGZyPvrQHqk02uyjA0/QrTO26Tqk6l4ZV0MPWIW6LTkqOIov+J1yEu7MbFQaDpwdwJKhbJvuRxQ==}
+-     cpu: [s390x]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@img/sharp-libvips-linux-x64@1.2.4':
+-     resolution: {integrity: sha512-tJxiiLsmHc9Ax1bz3oaOYBURTXGIRDODBqhveVHonrHJ9/+k89qbLl0bcJns+e4t4rvaNBxaEZsFtSfAdquPrw==}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@img/sharp-libvips-linuxmusl-arm64@1.2.4':
+-     resolution: {integrity: sha512-FVQHuwx1IIuNow9QAbYUzJ+En8KcVm9Lk5+uGUQJHaZmMECZmOlix9HnH7n1TRkXMS0pGxIJokIVB9SuqZGGXw==}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@img/sharp-libvips-linuxmusl-x64@1.2.4':
+-     resolution: {integrity: sha512-+LpyBk7L44ZIXwz/VYfglaX/okxezESc6UxDSoyo2Ks6Jxc4Y7sGjpgU9s4PMgqgjj1gZCylTieNamqA1MF7Dg==}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@img/sharp-linux-arm64@0.34.5':
+-     resolution: {integrity: sha512-bKQzaJRY/bkPOXyKx5EVup7qkaojECG6NLYswgktOZjaXecSAeCWiZwwiFf3/Y+O1HrauiE3FVsGxFg8c24rZg==}
+-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@img/sharp-linux-arm@0.34.5':
+-     resolution: {integrity: sha512-9dLqsvwtg1uuXBGZKsxem9595+ujv0sJ6Vi8wcTANSFpwV/GONat5eCkzQo/1O6zRIkh0m/8+5BjrRr7jDUSZw==}
+-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+-     cpu: [arm]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@img/sharp-linux-ppc64@0.34.5':
+-     resolution: {integrity: sha512-7zznwNaqW6YtsfrGGDA6BRkISKAAE1Jo0QdpNYXNMHu2+0dTrPflTLNkpc8l7MUP5M16ZJcUvysVWWrMefZquA==}
+-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+-     cpu: [ppc64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@img/sharp-linux-riscv64@0.34.5':
+-     resolution: {integrity: sha512-51gJuLPTKa7piYPaVs8GmByo7/U7/7TZOq+cnXJIHZKavIRHAP77e3N2HEl3dgiqdD/w0yUfiJnII77PuDDFdw==}
+-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+-     cpu: [riscv64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@img/sharp-linux-s390x@0.34.5':
+-     resolution: {integrity: sha512-nQtCk0PdKfho3eC5MrbQoigJ2gd1CgddUMkabUj+rBevs8tZ2cULOx46E7oyX+04WGfABgIwmMC0VqieTiR4jg==}
+-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+-     cpu: [s390x]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@img/sharp-linux-x64@0.34.5':
+-     resolution: {integrity: sha512-MEzd8HPKxVxVenwAa+JRPwEC7QFjoPWuS5NZnBt6B3pu7EG2Ge0id1oLHZpPJdn3OQK+BQDiw9zStiHBTJQQQQ==}
+-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@img/sharp-linuxmusl-arm64@0.34.5':
+-     resolution: {integrity: sha512-fprJR6GtRsMt6Kyfq44IsChVZeGN97gTD331weR1ex1c1rypDEABN6Tm2xa1wE6lYb5DdEnk03NZPqA7Id21yg==}
+-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@img/sharp-linuxmusl-x64@0.34.5':
+-     resolution: {integrity: sha512-Jg8wNT1MUzIvhBFxViqrEhWDGzqymo3sV7z7ZsaWbZNDLXRJZoRGrjulp60YYtV4wfY8VIKcWidjojlLcWrd8Q==}
+-     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@img/sharp-wasm32@0.34.5':
+-     resolution: {integrity: sha512-OdWTEiVkY2PHwqkbBI8frFxQQFekHaSSkUIJkwzclWZe64O1X4UlUjqqqLaPbUpMOQk6FBu/HtlGXNblIs0huw==}
+-@@ -763,30 +782,35 @@ packages:
+-     engines: {node: '>= 10'}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@napi-rs/canvas-linux-arm64-musl@0.1.86':
+-     resolution: {integrity: sha512-jbXuh8zVFUPw6a9SGpgc6EC+fRbGGyP1NFfeQiVqGLs6bN93ROtPLPL6MH9Bp6yt0CXUFallk2vgKdWDbmW+bw==}
+-     engines: {node: '>= 10'}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@napi-rs/canvas-linux-riscv64-gnu@0.1.86':
+-     resolution: {integrity: sha512-9IwHR2qbq2HceM9fgwyL7x37Jy3ptt1uxvikQEuWR0FisIx9QEdt7F3huljCky76aoouF2vSd0R2fHo3ESRoPw==}
+-     engines: {node: '>= 10'}
+-     cpu: [riscv64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@napi-rs/canvas-linux-x64-gnu@0.1.86':
+-     resolution: {integrity: sha512-Jor+rhRN6ubix+D2QkNn9XlPPVAYl+2qFrkZ4oZN9UgtqIUZ+n+HljxhlkkDFRaX1mlxXOXPQjxaZg17zDSFcQ==}
+-     engines: {node: '>= 10'}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@napi-rs/canvas-linux-x64-musl@0.1.86':
+-     resolution: {integrity: sha512-A28VTy91DbclopSGZ2tIon3p8hcVI1JhnNpDpJ5N9rYlUnVz1WQo4waEMh+FICTZF07O3coxBNZc4Vu4doFw7A==}
+-     engines: {node: '>= 10'}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@napi-rs/canvas-win32-arm64-msvc@0.1.86':
+-     resolution: {integrity: sha512-q6G1YXUt3gBCAS2bcDMCaBL4y20di8eVVBi1XhjUqZSVyZZxxwIuRQHy31NlPJUCMiyNiMuc6zeI0uqgkWwAmA==}
+-@@ -892,56 +916,67 @@ packages:
+-     resolution: {integrity: sha512-EHMUcDwhtdRGlXZsGSIuXSYwD5kOT9NVnx9sqzYiwAc91wfYOE1g1djOEDseZJKKqtHAHGwnGPQu3kytmfaXLQ==}
+-     cpu: [arm]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@rollup/rollup-linux-arm-musleabihf@4.54.0':
+-     resolution: {integrity: sha512-+pBrqEjaakN2ySv5RVrj/qLytYhPKEUwk+e3SFU5jTLHIcAtqh2rLrd/OkbNuHJpsBgxsD8ccJt5ga/SeG0JmA==}
+-     cpu: [arm]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@rollup/rollup-linux-arm64-gnu@4.54.0':
+-     resolution: {integrity: sha512-NSqc7rE9wuUaRBsBp5ckQ5CVz5aIRKCwsoa6WMF7G01sX3/qHUw/z4pv+D+ahL1EIKy6Enpcnz1RY8pf7bjwng==}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@rollup/rollup-linux-arm64-musl@4.54.0':
+-     resolution: {integrity: sha512-gr5vDbg3Bakga5kbdpqx81m2n9IX8M6gIMlQQIXiLTNeQW6CucvuInJ91EuCJ/JYvc+rcLLsDFcfAD1K7fMofg==}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@rollup/rollup-linux-loong64-gnu@4.54.0':
+-     resolution: {integrity: sha512-gsrtB1NA3ZYj2vq0Rzkylo9ylCtW/PhpLEivlgWe0bpgtX5+9j9EZa0wtZiCjgu6zmSeZWyI/e2YRX1URozpIw==}
+-     cpu: [loong64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@rollup/rollup-linux-ppc64-gnu@4.54.0':
+-     resolution: {integrity: sha512-y3qNOfTBStmFNq+t4s7Tmc9hW2ENtPg8FeUD/VShI7rKxNW7O4fFeaYbMsd3tpFlIg1Q8IapFgy7Q9i2BqeBvA==}
+-     cpu: [ppc64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@rollup/rollup-linux-riscv64-gnu@4.54.0':
+-     resolution: {integrity: sha512-89sepv7h2lIVPsFma8iwmccN7Yjjtgz0Rj/Ou6fEqg3HDhpCa+Et+YSufy27i6b0Wav69Qv4WBNl3Rs6pwhebQ==}
+-     cpu: [riscv64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@rollup/rollup-linux-riscv64-musl@4.54.0':
+-     resolution: {integrity: sha512-ZcU77ieh0M2Q8Ur7D5X7KvK+UxbXeDHwiOt/CPSBTI1fBmeDMivW0dPkdqkT4rOgDjrDDBUed9x4EgraIKoR2A==}
+-     cpu: [riscv64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@rollup/rollup-linux-s390x-gnu@4.54.0':
+-     resolution: {integrity: sha512-2AdWy5RdDF5+4YfG/YesGDDtbyJlC9LHmL6rZw6FurBJ5n4vFGupsOBGfwMRjBYH7qRQowT8D/U4LoSvVwOhSQ==}
+-     cpu: [s390x]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@rollup/rollup-linux-x64-gnu@4.54.0':
+-     resolution: {integrity: sha512-WGt5J8Ij/rvyqpFexxk3ffKqqbLf9AqrTBbWDk7ApGUzaIs6V+s2s84kAxklFwmMF/vBNGrVdYgbblCOFFezMQ==}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@rollup/rollup-linux-x64-musl@4.54.0':
+-     resolution: {integrity: sha512-JzQmb38ATzHjxlPHuTH6tE7ojnMKM2kYNzt44LO/jJi8BpceEC8QuXYA908n8r3CNuG/B3BV8VR3Hi1rYtmPiw==}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@rollup/rollup-openharmony-arm64@4.54.0':
+-     resolution: {integrity: sha512-huT3fd0iC7jigGh7n3q/+lfPcXxBi+om/Rs3yiFxjvSxbSB6aohDFXbWvlspaqjeOh+hx7DDHS+5Es5qRkWkZg==}
+-@@ -1054,24 +1089,28 @@ packages:
+-     engines: {node: '>=10'}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@swc/core-linux-arm64-musl@1.5.7':
+-     resolution: {integrity: sha512-+NDhK+IFTiVK1/o7EXdCeF2hEzCiaRSrb9zD7X2Z7inwWlxAntcSuzZW7Y6BRqGQH89KA91qYgwbnjgTQ22PiQ==}
+-     engines: {node: '>=10'}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@swc/core-linux-x64-gnu@1.5.7':
+-     resolution: {integrity: sha512-25GXpJmeFxKB+7pbY7YQLhWWjkYlR+kHz5I3j9WRl3Lp4v4UD67OGXwPe+DIcHqcouA1fhLhsgHJWtsaNOMBNg==}
+-     engines: {node: '>=10'}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@swc/core-linux-x64-musl@1.5.7':
+-     resolution: {integrity: sha512-0VN9Y5EAPBESmSPPsCJzplZHV26akC0sIgd3Hc/7S/1GkSMoeuVL+V9vt+F/cCuzr4VidzSkqftdP3qEIsXSpg==}
+-     engines: {node: '>=10'}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@swc/core-win32-arm64-msvc@1.5.7':
+-     resolution: {integrity: sha512-RtoNnstBwy5VloNCvmvYNApkTmuCe4sNcoYWpmY7C1+bPR+6SOo8im1G6/FpNem8AR5fcZCmXHWQ+EUmRWJyuA==}
+-@@ -1144,24 +1183,28 @@ packages:
+-     engines: {node: '>= 10'}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@tailwindcss/oxide-linux-arm64-musl@4.1.18':
+-     resolution: {integrity: sha512-1px92582HkPQlaaCkdRcio71p8bc8i/ap5807tPRDK/uw953cauQBT8c5tVGkOwrHMfc2Yh6UuxaH4vtTjGvHg==}
+-     engines: {node: '>= 10'}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@tailwindcss/oxide-linux-x64-gnu@4.1.18':
+-     resolution: {integrity: sha512-v3gyT0ivkfBLoZGF9LyHmts0Isc8jHZyVcbzio6Wpzifg/+5ZJpDiRiUhDLkcr7f/r38SWNe7ucxmGW3j3Kb/g==}
+-     engines: {node: '>= 10'}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@tailwindcss/oxide-linux-x64-musl@4.1.18':
+-     resolution: {integrity: sha512-bhJ2y2OQNlcRwwgOAGMY0xTFStt4/wyU6pvI6LSuZpRgKQwxTec0/3Scu91O8ir7qCR3AuepQKLU/kX99FouqQ==}
+-     engines: {node: '>= 10'}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@tailwindcss/oxide-wasm32-wasi@4.1.18':
+-     resolution: {integrity: sha512-LffYTvPjODiP6PT16oNeUQJzNVyJl1cjIebq/rWWBF+3eDst5JGEFSc5cWxyRCJ0Mxl+KyIkqRxk1XPEs9x8TA==}
+-@@ -1227,30 +1270,35 @@ packages:
+-     engines: {node: '>= 10'}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@tauri-apps/cli-linux-arm64-musl@2.5.0':
+-     resolution: {integrity: sha512-rQO1HhRUQqyEaal5dUVOQruTRda/TD36s9kv1hTxZiFuSq3558lsTjAcUEnMAtBcBkps20sbyTJNMT0AwYIk8Q==}
+-     engines: {node: '>= 10'}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@tauri-apps/cli-linux-riscv64-gnu@2.5.0':
+-     resolution: {integrity: sha512-7oS18FN46yDxyw1zX/AxhLAd7T3GrLj3Ai6s8hZKd9qFVzrAn36ESL7d3G05s8wEtsJf26qjXnVF4qleS3dYsA==}
+-     engines: {node: '>= 10'}
+-     cpu: [riscv64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@tauri-apps/cli-linux-x64-gnu@2.5.0':
+-     resolution: {integrity: sha512-SG5sFNL7VMmDBdIg3nO3EzNRT306HsiEQ0N90ILe3ZABYAVoPDO/ttpCO37ApLInTzrq/DLN+gOlC/mgZvLw1w==}
+-     engines: {node: '>= 10'}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   '@tauri-apps/cli-linux-x64-musl@2.5.0':
+-     resolution: {integrity: sha512-QXDM8zp/6v05PNWju5ELsVwF0VH1n6b5pk2E6W/jFbbiwz80Vs1lACl9pv5kEHkrxBj+aWU/03JzGuIj2g3SkQ==}
+-     engines: {node: '>= 10'}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   '@tauri-apps/cli-win32-arm64-msvc@2.5.0':
+-     resolution: {integrity: sha512-pFSHFK6b+o9y4Un8w0gGLwVyFTZaC3P0kQ7umRt/BLDkzD5RnQ4vBM7CF8BCU5nkwmEBUCZd7Wt3TWZxe41o6Q==}
+-@@ -1742,6 +1790,9 @@ packages:
+-     resolution: {integrity: sha512-IE9csY7lnhxBnA8g/WI5eg/hygA6MGWJMSNfFRrBlXUciADEhS1EDB0SIsMSvzubzIlOBbVITSsypCsW717poA==}
+-     engines: {node: '>=12.17.0'}
+- 
+-+  fast-json-patch@3.1.1:
+-+    resolution: {integrity: sha512-vf6IHUX2SBcA+5/+4883dsIjpBTqmfBjmYiWK1savxQmFk4JfBMLa7ynTYOs1Rolp/T1betJxHiGD3g1Mn8lUQ==}
+-+
+-   fdir@6.5.0:
+-     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
+-     engines: {node: '>=12.0.0'}
+-@@ -1942,24 +1993,28 @@ packages:
+-     engines: {node: '>= 12.0.0'}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   lightningcss-linux-arm64-musl@1.30.2:
+-     resolution: {integrity: sha512-5Vh9dGeblpTxWHpOx8iauV02popZDsCYMPIgiuw97OJ5uaDsL86cnqSFs5LZkG3ghHoX5isLgWzMs+eD1YzrnA==}
+-     engines: {node: '>= 12.0.0'}
+-     cpu: [arm64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   lightningcss-linux-x64-gnu@1.30.2:
+-     resolution: {integrity: sha512-Cfd46gdmj1vQ+lR6VRTTadNHu6ALuw2pKR9lYq4FnhvgBc4zWY1EtZcAc6EffShbb1MFrIPfLDXD6Xprbnni4w==}
+-     engines: {node: '>= 12.0.0'}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [glibc]
+- 
+-   lightningcss-linux-x64-musl@1.30.2:
+-     resolution: {integrity: sha512-XJaLUUFXb6/QG2lGIW6aIk6jKdtjtcffUT0NKvIqhSBY3hh9Ch+1LCeH80dR9q9LBjG3ewbDjnumefsLsP6aiA==}
+-     engines: {node: '>= 12.0.0'}
+-     cpu: [x64]
+-     os: [linux]
+-+    libc: [musl]
+- 
+-   lightningcss-win32-arm64-msvc@1.30.2:
+-     resolution: {integrity: sha512-FZn+vaj7zLv//D/192WFFVA0RgHawIcHqLX9xuWiQt7P0PtdFEVaxgF9rjM/IRYHQXNnk61/H/gb2Ei+kUQ4xQ==}
+-@@ -3889,6 +3944,8 @@ snapshots:
+-     dependencies:
+-       pure-rand: 7.0.1
+- 
+-+  fast-json-patch@3.1.1: {}
+-+
+-   fdir@6.5.0(picomatch@4.0.3):
+-     optionalDependencies:
+-       picomatch: 4.0.3
+-diff --git a/server/node/server.cjs b/server/node/server.cjs
+-index e7c2dcac..33cf03ac 100644
+---- a/server/node/server.cjs
+-+++ b/server/node/server.cjs
+-@@ -5,6 +5,7 @@ const htmlparser = require('node-html-parser');
+- const { existsSync, mkdirSync, readFileSync, writeFileSync } = require('fs');
+- const fs = require('fs/promises')
+- const nodeCrypto = require('crypto')
+-+const fastJsonPatch = require('fast-json-patch');
+- app.use(express.static(path.join(process.cwd(), 'dist'), {index: false}));
+- app.use(express.json({ limit: '100mb' }));
+- app.use(express.raw({ type: 'application/octet-stream', limit: '100mb' }));
+-@@ -13,7 +14,70 @@ const {pipeline} = require('stream/promises')
+- const https = require('https');
+- const sslPath = path.join(process.cwd(), 'server/node/ssl/certificate');
+- const hubURL = 'https://sv.risuai.xyz'; 
+--const openid = require('openid-client');
+-+const openid = (() => {
+-+    let _mod = null;
+-+    return async () => {
+-+        if (!_mod) _mod = await import('openid-client');
+-+        return _mod;
+-+    };
+-+})();
+-+
+-+// --- Node.js Version Guard for patch support ---
+-+const nodeVersion = process.version;
+-+const nodeVersionMatch = nodeVersion.match(/^v(\d+)\.(\d+)\.(\d+)/);
+-+const nodeMajor = nodeVersionMatch ? parseInt(nodeVersionMatch[1]) : 0;
+-+const nodeMinor = nodeVersionMatch ? parseInt(nodeVersionMatch[2]) : 0;
+-+const nodePatch = nodeVersionMatch ? parseInt(nodeVersionMatch[3]) : 0;
+-+const patchDisabledByVersion = (
+-+    (nodeMajor === 22 && nodeMinor >= 7) ||
+-+    (nodeMajor >= 23)
+-+);
+-+if (patchDisabledByVersion) {
+-+    console.warn(`[Server] WARNING: Patch-based sync is disabled on Node.js ${nodeVersion} due to known msgpackr encoding issues.`);
+-+    console.warn(`[Server] Please use Node.js v22.6.x or earlier for optimal performance.`);
+-+}
+-+
+-+// --- In-memory file cache for patch operations ---
+-+const inMemoryFileCache = new Map(); // filename -> { data: object, hash: string }
+-+const pendingWrites = new Map(); // filename -> timeout ID
+-+const DEBOUNCE_MS = 5000;
+-+
+-+function normalizeJSON(obj) {
+-+    if (obj === null || typeof obj !== 'object') return obj;
+-+    if (Array.isArray(obj)) return obj.map(normalizeJSON);
+-+    const sorted = {};
+-+    for (const key of Object.keys(obj).sort()) {
+-+        sorted[key] = normalizeJSON(obj[key]);
+-+    }
+-+    return sorted;
+-+}
+-+
+-+function calculateHashSync(data) {
+-+    const normalized = JSON.stringify(normalizeJSON(data));
+-+    return nodeCrypto.createHash('sha256').update(normalized, 'utf-8').digest('hex');
+-+}
+-+
+-+async function debouncedWrite(filename, data) {
+-+    const hexFilename = Buffer.from(filename, 'utf-8').toString('hex');
+-+    if (pendingWrites.has(filename)) {
+-+        clearTimeout(pendingWrites.get(filename));
+-+    }
+-+    pendingWrites.set(filename, setTimeout(async () => {
+-+        try {
+-+            const encoded = Buffer.from(JSON.stringify(data), 'utf-8');
+-+            await fs.writeFile(path.join(savePath, hexFilename), encoded);
+-+            // Auto-create backup
+-+            const backupName = `database/dbbackup-${(Date.now() / 100).toFixed()}.bin`;
+-+            const hexBackup = Buffer.from(backupName, 'utf-8').toString('hex');
+-+            await fs.writeFile(path.join(savePath, hexBackup), encoded);
+-+            console.log(`[Patch] Debounced write completed for: ${filename}`);
+-+        } catch (err) {
+-+            console.error(`[Patch] Debounced write error for ${filename}:`, err);
+-+        } finally {
+-+            pendingWrites.delete(filename);
+-+        }
+-+    }, DEBOUNCE_MS));
+-+}
+- 
+- let password = ''
+- let knownPublicKeysHashes = []
+-@@ -600,9 +664,15 @@ app.get('/api/list', async (req, res, next) => {
+-         return;
+-     }
+-     try {
+-+        const prefix = req.query.prefix || '';
+-         const data = (await fs.readdir(path.join(savePath))).map((v) => {
+-             return Buffer.from(v, 'hex').toString('utf-8')
+--        })
+-+        }).filter((v) => {
+-+            if (prefix) {
+-+                return v.startsWith(prefix);
+-+            }
+-+            return true;
+-+        });
+-         res.send({
+-             success: true,
+-             content: data
+-@@ -612,6 +682,96 @@ app.get('/api/list', async (req, res, next) => {
+-     }
+- });
+- 
+-+app.get('/api/patch/status', async (req, res) => {
+-+    res.send({
+-+        enabled: !patchDisabledByVersion,
+-+        nodeVersion: nodeVersion,
+-+        reason: patchDisabledByVersion ? 'Node.js version not supported for patch operations' : null
+-+    });
+-+});
+-+
+-+app.post('/api/patch', async (req, res, next) => {
+-+    if(!await checkAuth(req, res)){
+-+        return;
+-+    }
+-+
+-+    if (patchDisabledByVersion) {
+-+        res.status(501).send({ error: 'Patch operations disabled on this Node.js version', nodeVersion });
+-+        return;
+-+    }
+-+
+-+    try {
+-+        const { filename, patch, expectedHash } = req.body;
+-+
+-+        if (!filename || !patch || !expectedHash) {
+-+            res.status(400).send({ error: 'filename, patch, and expectedHash are required' });
+-+            return;
+-+        }
+-+
+-+        if (!isHex(Buffer.from(filename, 'utf-8').toString('hex'))) {
+-+            res.status(400).send({ error: 'Invalid filename' });
+-+            return;
+-+        }
+-+
+-+        const hexFilename = Buffer.from(filename, 'utf-8').toString('hex');
+-+        const filePath = path.join(savePath, hexFilename);
+-+
+-+        // Load current data into cache if not present
+-+        let currentData;
+-+        if (inMemoryFileCache.has(filename)) {
+-+            currentData = inMemoryFileCache.get(filename).data;
+-+        } else {
+-+            if (!existsSync(filePath)) {
+-+                res.status(404).send({ error: 'File not found, full save required' });
+-+                return;
+-+            }
+-+            const raw = await fs.readFile(filePath, 'utf-8');
+-+            try {
+-+                currentData = JSON.parse(raw);
+-+            } catch (e) {
+-+                res.status(400).send({ error: 'Existing file is not valid JSON, full save required' });
+-+                return;
+-+            }
+-+        }
+-+
+-+        // Apply patch
+-+        const patchResult = fastJsonPatch.applyPatch(currentData, patch, true, false);
+-+        const patchedData = patchResult.newDocument;
+-+
+-+        // Verify hash
+-+        const serverHash = calculateHashSync(patchedData);
+-+        if (serverHash !== expectedHash) {
+-+            // Invalidate cache on mismatch
+-+            inMemoryFileCache.delete(filename);
+-+            res.status(409).send({
+-+                error: 'Hash mismatch',
+-+                serverHash,
+-+                expectedHash,
+-+                message: 'Data integrity check failed. Please perform a full save.'
+-+            });
+-+            return;
+-+        }
+-+
+-+        // Update in-memory cache
+-+        inMemoryFileCache.set(filename, { data: patchedData, hash: serverHash });
+-+
+-+        // Debounced disk write + backup
+-+        await debouncedWrite(filename, patchedData);
+-+
+-+        res.send({
+-+            success: true,
+-+            hash: serverHash
+-+        });
+-+    } catch (error) {
+-+        console.error('[Patch] Error:', error);
+-+        // Invalidate cache on error
+-+        if (req.body && req.body.filename) {
+-+            inMemoryFileCache.delete(req.body.filename);
+-+        }
+-+        res.status(500).send({ error: 'Patch operation failed: ' + error.message });
+-+    }
+-+});
+-+
+- app.post('/api/write', async (req, res, next) => {
+-     if(!await checkAuth(req, res)){
+-         return;
+-@@ -656,7 +816,8 @@ app.get('/api/oauth_login', async (req, res) => {
+-         return
+-     }
+-     if(!oauthData.client_id || !oauthData.client_secret){
+--        const discovery = await openid.discovery('https://account.sionyw.com/','','');
+-+        const openidMod = await openid();
+-+        const discovery = await openidMod.discovery('https://account.sionyw.com/','','');
+-         oauthData.config = discovery;
+- 
+-         //oauth dynamic client registration
+-@@ -698,11 +859,12 @@ app.get('/api/oauth_login', async (req, res) => {
+- 
+-         //now lets request
+- 
+--        let code_verifier = openid.randomPKCECodeVerifier();
+--        let code_challenge = await openid.calculatePKCECodeChallenge(code_verifier);
+-+        const openidMod2 = await openid();
+-+        let code_verifier = openidMod2.randomPKCECodeVerifier();
+-+        let code_challenge = await openidMod2.calculatePKCECodeChallenge(code_verifier);
+- 
+-         oauthData.code_verifier = code_verifier;
+--        let redirectTo = openid.buildAuthorizationUrl(oauthData.config, {
+-+        let redirectTo = openidMod2.buildAuthorizationUrl(oauthData.config, {
+-             redirect_uri,
+-             code_challenge,
+-             code_challenge_method: 'S256',
+-@@ -734,7 +896,8 @@ app.get('/api/oauth_callback', async (req, res) => {
+-         return
+-     }
+- 
+--    let tokens = await openid.authorizationCodeGrant(
+-+    const openidMod3 = await openid();
+-+    let tokens = await openidMod3.authorizationCodeGrant(
+-         oauthData.config,   
+-         getCurrentUrl(),
+-         {
+-diff --git a/src/ts/globalApi.svelte.ts b/src/ts/globalApi.svelte.ts
+-index dbbd0364..0c968576 100644
+---- a/src/ts/globalApi.svelte.ts
+-+++ b/src/ts/globalApi.svelte.ts
+-@@ -25,7 +25,9 @@ import { characterURLImport, hubURL } from "./characterCards";
+- import { defaultJailbreak, defaultMainPrompt, oldJailbreak, oldMainPrompt } from "./storage/defaultPrompts";
+- import { loadRisuAccountData } from "./drive/accounter";
+- import { decodeRisuSave, encodeRisuSaveLegacy, RisuSaveEncoder, type toSaveType } from "./storage/risuSave";
+-+import { RisuSavePatcher } from "./storage/risuSavePatcher";
+- import { AutoStorage } from "./storage/autoStorage";
+-+import { NodeStorage } from "./storage/nodeStorage";
+- import { updateAnimationSpeed } from "./gui/animation";
+- import { updateColorScheme, updateTextThemeAndCSS } from "./gui/colorscheme";
+- import { autoServerBackup, saveDbKei } from "./kei/backup";
+-@@ -380,6 +382,33 @@ export async function saveDb() {
+- 
+-     let savetrys = 0
+-     let lastDbData = new Uint8Array(0)
+-+
+-+    // --- Patch-based save setup for Node server ---
+-+    let patcher: RisuSavePatcher | null = null;
+-+    let patchSupported = false;
+-+    let usePatchSave = false;
+-+
+-+    if (isNodeServer && !forageStorage.isAccount) {
+-+        try {
+-+            const nodeStorage = new NodeStorage();
+-+            patchSupported = await nodeStorage.checkPatchSupport();
+-+            if (patchSupported) {
+-+                patcher = new RisuSavePatcher();
+-+                const seedData = await patcher.init(getDatabase());
+-+                usePatchSave = true;
+-+                console.log('[saveDb] Patch-based save enabled. Seeding initial files...');
+-+                // Seed initial data to server
+-+                for (const [blockName, blockData] of seedData.entries()) {
+-+                    const uint8Data = new TextEncoder().encode(JSON.stringify(blockData));
+-+                    await nodeStorage.setItem(`database/${blockName}.json`, uint8Data);
+-+                }
+-+                console.log('[saveDb] Seeding complete.');
+-+            }
+-+        } catch (e) {
+-+            console.warn('[saveDb] Failed to initialize patcher, using full save:', e);
+-+        }
+-+    }
+-+
+-     await sleep(1000)
+-     while (true) {
+-         if (!changed) {
+-@@ -398,6 +427,18 @@ export async function saveDb() {
+-                     skipRemoteSavingOnCharacters: false
+-                 })
+-                 requiresFullEncoderReload.state = false
+-+                // Re-init patcher on full reload
+-+                if (patcher) {
+-+                    patcher.reset();
+-+                    const seedData = await patcher.init(getDatabase());
+-+                    if (isNodeServer && !forageStorage.isAccount) {
+-+                        const nodeStorage = new NodeStorage();
+-+                        for (const [blockName, blockData] of seedData.entries()) {
+-+                            const uint8Data = new TextEncoder().encode(JSON.stringify(blockData));
+-+                            await nodeStorage.setItem(`database/${blockName}.json`, uint8Data);
+-+                        }
+-+                    }
+-+                }
+-             }
+- 
+-             let toSave = safeStructuredClone(changeTracker)
+-@@ -419,27 +460,85 @@ export async function saveDb() {
+-                 continue
+-             }
+- 
+--            await encoder.set(db, toSave)
+--            const encoded = encoder.encode()
+--            if (!encoded) {
+--                await sleep(1000)
+--                continue
+--            }
+--            const dbData = new Uint8Array(encoded)
+--            if (isTauri) {
+--                await writeFile('database/database.bin', dbData, { baseDir: BaseDirectory.AppData });
+--                await writeFile(`database/dbbackup-${(Date.now() / 100).toFixed()}.bin`, dbData, { baseDir: BaseDirectory.AppData });
+-+            // --- Try patch-based save for NodeServer ---
+-+            let patchSaveSuccess = false;
+-+            if (usePatchSave && patcher && isNodeServer && !forageStorage.isAccount) {
+-+                try {
+-+                    const patches = await patcher.generatePatches(db, toSave);
+-+                    if (patches && patches.length > 0) {
+-+                        const nodeStorage = new NodeStorage();
+-+                        let allPatchesSucceeded = true;
+-+                        for (const p of patches) {
+-+                            const filename = `database/${p.blockName}.json`;
+-+                            const result = await nodeStorage.patchItem(filename, p.patch, p.expectedHash);
+-+                            if (result === null) {
+-+                                // Hash mismatch or server error - fallback to full save
+-+                                allPatchesSucceeded = false;
+-+                                console.warn(`[saveDb] Patch failed for block ${p.blockName}, falling back to full save`);
+-+                                patcher.invalidateBlock(p.blockName);
+-+                                break;
+-+                            }
+-+                        }
+-+                        if (allPatchesSucceeded) {
+-+                            patchSaveSuccess = true;
+-+                        }
+-+                    } else if (patches && patches.length === 0) {
+-+                        // No changes - skip save
+-+                        patchSaveSuccess = true;
+-+                    }
+-+                    // patches === null means patcher couldn't generate (new character etc), fall through to full save
+-+                } catch (e) {
+-+                    console.warn('[saveDb] Patch save error, falling back to full save:', e);
+-+                    patcher.reset();
+-+                    const seedData = await patcher.init(db);
+-+                    if (isNodeServer && !forageStorage.isAccount) {
+-+                        const nodeStorage = new NodeStorage();
+-+                        for (const [blockName, blockData] of seedData.entries()) {
+-+                            const uint8Data = new TextEncoder().encode(JSON.stringify(blockData));
+-+                            await nodeStorage.setItem(`database/${blockName}.json`, uint8Data);
+-+                        }
+-+                    }
+-+                }
+-             }
+--            else {
+- 
+--                await forageStorage.setItem('database/database.bin', dbData)
+--                if (!forageStorage.isAccount) {
+--                    await forageStorage.setItem(`database/dbbackup-${(Date.now() / 100).toFixed()}.bin`, dbData)
+-+            // --- Full save (original or fallback) ---
+-+            if (!patchSaveSuccess) {
+-+                await encoder.set(db, toSave)
+-+                const encoded = encoder.encode()
+-+                if (!encoded) {
+-+                    await sleep(1000)
+-+                    continue
+-                 }
+--                if (forageStorage.isAccount) {
+--                    await sleep(3000)
+-+                const dbData = new Uint8Array(encoded)
+-+                if (isTauri) {
+-+                    await writeFile('database/database.bin', dbData, { baseDir: BaseDirectory.AppData });
+-+                    await writeFile(`database/dbbackup-${(Date.now() / 100).toFixed()}.bin`, dbData, { baseDir: BaseDirectory.AppData });
+-+                }
+-+                else {
+-+
+-+                    await forageStorage.setItem('database/database.bin', dbData)
+-+                    if (!forageStorage.isAccount) {
+-+                        await forageStorage.setItem(`database/dbbackup-${(Date.now() / 100).toFixed()}.bin`, dbData)
+-+                    }
+-+                    if (forageStorage.isAccount) {
+-+                        await sleep(3000)
+-+                    }
+-+                }
+-+
+-+                // Re-sync patcher state after full save
+-+                if (patcher) {
+-+                    patcher.reset();
+-+                    const seedData = await patcher.init(db);
+-+                    if (isNodeServer && !forageStorage.isAccount) {
+-+                        const nodeStorage = new NodeStorage();
+-+                        for (const [blockName, blockData] of seedData.entries()) {
+-+                            const uint8Data = new TextEncoder().encode(JSON.stringify(blockData));
+-+                            await nodeStorage.setItem(`database/${blockName}.json`, uint8Data);
+-+                        }
+-+                    }
+-                 }
+-             }
+-+
+-             if (!forageStorage.isAccount) {
+-                 await getDbBackups()
+-             }
+-@@ -488,7 +587,17 @@ export async function getDbBackups() {
+-         return backups
+-     }
+-     else {
+--        const keys = await forageStorage.keys()
+-+        let keys: string[];
+-+        // Use prefix-based filtering for NodeServer to reduce traffic
+-+        if (isNodeServer && forageStorage.realStorage instanceof NodeStorage) {
+-+            try {
+-+                keys = await (forageStorage.realStorage as NodeStorage).listItemsWithPrefix('database/dbbackup-');
+-+            } catch (e) {
+-+                keys = await forageStorage.keys();
+-+            }
+-+        } else {
+-+            keys = await forageStorage.keys();
+-+        }
+- 
+-         const backups = keys
+-             .filter(key => key.startsWith('database/dbbackup-'))
+-diff --git a/src/ts/storage/nodeStorage.ts b/src/ts/storage/nodeStorage.ts
+-index 59d5ca44..7420fb77 100644
+---- a/src/ts/storage/nodeStorage.ts
+-+++ b/src/ts/storage/nodeStorage.ts
+-@@ -1,6 +1,7 @@
+- import { language } from "src/lang"
+- import { alertError, alertInput, waitAlert } from "../alert"
+- import { base64url, getKeypairStore, saveKeypairStore } from "../util"
+-+import type { Operation } from 'fast-json-patch'
+- 
+- 
+- export class NodeStorage{
+-@@ -188,6 +189,92 @@ export class NodeStorage{
+-     }
+- 
+-     listItem = this.keys
+-+
+-+    private patchSupportCache: boolean | null = null;
+-+
+-+    /**
+-+     * Check if the server supports patch operations.
+-+     * Caches the result for subsequent calls.
+-+     */
+-+    async checkPatchSupport(): Promise<boolean> {
+-+        if (this.patchSupportCache !== null) {
+-+            return this.patchSupportCache;
+-+        }
+-+        try {
+-+            const da = await fetch('/api/patch/status', {
+-+                method: 'GET'
+-+            });
+-+            if (da.status >= 200 && da.status < 300) {
+-+                const data = await da.json();
+-+                this.patchSupportCache = data.enabled === true;
+-+                if (!this.patchSupportCache) {
+-+                    console.warn(`[NodeStorage] Patch disabled by server: ${data.reason}`);
+-+                }
+-+                return this.patchSupportCache;
+-+            }
+-+        } catch (error) {
+-+            console.warn('[NodeStorage] Could not check patch support:', error);
+-+        }
+-+        this.patchSupportCache = false;
+-+        return false;
+-+    }
+-+
+-+    /**
+-+     * Send a JSON patch to the server.
+-+     * Returns the server hash on success, or null on failure (hash mismatch, etc).
+-+     */
+-+    async patchItem(filename: string, patch: Operation[], expectedHash: string): Promise<string | null> {
+-+        await this.checkAuth();
+-+        try {
+-+            const da = await fetch('/api/patch', {
+-+                method: 'POST',
+-+                body: JSON.stringify({ filename, patch, expectedHash }),
+-+                headers: {
+-+                    'content-type': 'application/json',
+-+                    'risu-auth': await this.createAuth()
+-+                }
+-+            });
+-+            if (da.status === 409) {
+-+                console.warn('[NodeStorage] Patch hash mismatch, full save required');
+-+                return null;
+-+            }
+-+            if (da.status === 501) {
+-+                console.warn('[NodeStorage] Patch not supported by server');
+-+                this.patchSupportCache = false;
+-+                return null;
+-+            }
+-+            if (da.status < 200 || da.status >= 300) {
+-+                console.error('[NodeStorage] Patch failed with status:', da.status);
+-+                return null;
+-+            }
+-+            const data = await da.json();
+-+            return data.hash || null;
+-+        } catch (error) {
+-+            console.error('[NodeStorage] Patch request error:', error);
+-+            return null;
+-+        }
+-+    }
+-+
+-+    /**
+-+     * List files with a specific prefix filter.
+-+     */
+-+    async listItemsWithPrefix(prefix: string): Promise<string[]> {
+-+        await this.checkAuth();
+-+        const da = await fetch(`/api/list?prefix=${encodeURIComponent(prefix)}`, {
+-+            method: 'GET',
+-+            headers: {
+-+                'risu-auth': await this.createAuth()
+-+            }
+-+        });
+-+        if (da.status < 200 || da.status >= 300) {
+-+            throw 'listItemsWithPrefix Error';
+-+        }
+-+        const data = await da.json();
+-+        if (data.error) {
+-+            throw data.error;
+-+        }
+-+        return data.content;
+-+    }
+- }
+- 
+- async function digestPassword(message:string) {
+-diff --git a/src/ts/storage/patchUtils.ts b/src/ts/storage/patchUtils.ts
+-new file mode 100644
+-index 00000000..8ca1f903
+---- /dev/null
+-+++ b/src/ts/storage/patchUtils.ts
+-@@ -0,0 +1,33 @@
+-+/**
+-+ * Utility functions for JSON patch operations.
+-+ * Used by RisuSavePatcher for generating normalized hashes.
+-+ */
+-+
+-+/**
+-+ * Recursively normalizes a JSON object by sorting all keys alphabetically.
+-+ * This ensures that structurally identical objects produce the same hash
+-+ * regardless of key insertion order.
+-+ */
+-+export function normalizeJSON(obj: any): any {
+-+    if (obj === null || obj === undefined) return obj;
+-+    if (typeof obj !== 'object') return obj;
+-+    if (Array.isArray(obj)) return obj.map(normalizeJSON);
+-+
+-+    const sorted: Record<string, any> = {};
+-+    for (const key of Object.keys(obj).sort()) {
+-+        sorted[key] = normalizeJSON(obj[key]);
+-+    }
+-+    return sorted;
+-+}
+-+
+-+/**
+-+ * Calculates a SHA-256 hash of the given data after normalizing it.
+-+ * Uses Web Crypto API for browser compatibility.
+-+ */
+-+export async function calculateHash(data: any): Promise<string> {
+-+    const normalized = JSON.stringify(normalizeJSON(data));
+-+    const encoded = new TextEncoder().encode(normalized);
+-+    const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
+-+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+-+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+-+}
+-diff --git a/src/ts/storage/risuSavePatcher.ts b/src/ts/storage/risuSavePatcher.ts
+-new file mode 100644
+-index 00000000..f656b7ac
+---- /dev/null
+-+++ b/src/ts/storage/risuSavePatcher.ts
+-@@ -0,0 +1,210 @@
+-+/**
+-+ * RisuSavePatcher - Efficient patch-based save system for Node.js server mode.
+-+ * 
+-+ * Instead of sending the entire database (~100MB) on each save,
+-+ * this class generates JSON patches (~10KB) of only the changed data
+-+ * and sends them to the server for in-memory application.
+-+ * 
+-+ * Uses fast-json-patch for diff generation and custom hash functions
+-+ * for data integrity verification.
+-+ */
+-+
+-+import { compare, type Operation } from 'fast-json-patch';
+-+import type { Database } from './database.svelte';
+-+import type { toSaveType } from './risuSave';
+-+import { normalizeJSON, calculateHash } from './patchUtils';
+-+
+-+declare function safeStructuredClone<T>(data: T): T;
+-+
+-+export interface PatchResult {
+-+    /** The JSON patch operations to send */
+-+    patch: Operation[];
+-+    /** The expected hash after applying the patch */
+-+    expectedHash: string;
+-+    /** The block name that was patched */
+-+    blockName: string;
+-+}
+-+
+-+export class RisuSavePatcher {
+-+    /** Previous state snapshots for each block, keyed by block name */
+-+    private previousStates: Map<string, any> = new Map();
+-+    /** Cached hashes for each block */
+-+    private hashes: Map<string, string> = new Map();
+-+    /** Whether the patcher has been initialized with a full state */
+-+    private initialized: boolean = false;
+-+
+-+    /**
+-+     * Initialize the patcher with the full database state.
+-+     * Returns a map of blockName -> data for initial seeding to the server.
+-+     * The caller should write these as JSON files so that /api/patch can find them.
+-+     */
+-+    async init(data: Database): Promise<Map<string, any>> {
+-+        const seedData = new Map<string, any>();
+-+
+-+        // Store root state (everything except characters, botPresets, modules)
+-+        const rootObj: Record<string, any> = {};
+-+        for (const key of Object.keys(data)) {
+-+            if (key !== 'characters' && key !== 'botPresets' && key !== 'modules') {
+-+                rootObj[key] = data[key];
+-+            }
+-+        }
+-+        this.previousStates.set('root', safeStructuredClone(rootObj));
+-+        this.hashes.set('root', await calculateHash(rootObj));
+-+        seedData.set('root', rootObj);
+-+
+-+        // Store preset state
+-+        this.previousStates.set('preset', safeStructuredClone(data.botPresets));
+-+        this.hashes.set('preset', await calculateHash(data.botPresets));
+-+        seedData.set('preset', data.botPresets);
+-+
+-+        // Store modules state
+-+        this.previousStates.set('modules', safeStructuredClone(data.modules));
+-+        this.hashes.set('modules', await calculateHash(data.modules));
+-+        seedData.set('modules', data.modules);
+-+
+-+        // Store character states
+-+        for (const character of data.characters) {
+-+            this.previousStates.set(character.chaId, safeStructuredClone(character));
+-+            this.hashes.set(character.chaId, await calculateHash(character));
+-+            seedData.set(character.chaId, character);
+-+        }
+-+
+-+        this.initialized = true;
+-+        return seedData;
+-+    }
+-+
+-+    /**
+-+     * Generate patches for the changed blocks. Uses changeTracker to only
+-+     * process modified data, minimizing computation.
+-+     * 
+-+     * @returns Array of patch results, or null if a full save is needed
+-+     */
+-+    async generatePatches(data: Database, toSave: toSaveType): Promise<PatchResult[] | null> {
+-+        if (!this.initialized) {
+-+            return null;
+-+        }
+-+
+-+        const results: PatchResult[] = [];
+-+
+-+        try {
+-+            // Process root (non-character, non-preset, non-module fields)
+-+            const rootObj: Record<string, any> = {};
+-+            for (const key of Object.keys(data)) {
+-+                if (key !== 'characters' && key !== 'botPresets' && key !== 'modules') {
+-+                    rootObj[key] = data[key];
+-+                }
+-+            }
+-+            const rootPatch = await this.generateBlockPatch('root', rootObj);
+-+            if (rootPatch && rootPatch.patch.length > 0) {
+-+                results.push(rootPatch);
+-+            }
+-+
+-+            // Process changed characters
+-+            const processedCharIds = new Set<string>();
+-+            for (const chaId of toSave.character) {
+-+                const character = data.characters.find(c => c.chaId === chaId);
+-+                if (character) {
+-+                    const charPatch = await this.generateBlockPatch(chaId, character);
+-+                    if (charPatch && charPatch.patch.length > 0) {
+-+                        results.push(charPatch);
+-+                    }
+-+                    processedCharIds.add(chaId);
+-+                }
+-+            }
+-+
+-+            // Process new characters (not in previousStates)
+-+            for (const character of data.characters) {
+-+                if (!processedCharIds.has(character.chaId) && !this.previousStates.has(character.chaId)) {
+-+                    // New character - needs full save for this block, return null
+-+                    return null;
+-+                }
+-+            }
+-+
+-+            // Check for deleted characters
+-+            for (const [key] of this.previousStates) {
+-+                if (key === 'root' || key === 'preset' || key === 'modules') continue;
+-+                if (!data.characters.find(c => c.chaId === key)) {
+-+                    // Character deleted - needs full save
+-+                    return null;
+-+                }
+-+            }
+-+
+-+            // Process presets if changed
+-+            if (toSave.botPreset) {
+-+                const presetPatch = await this.generateBlockPatch('preset', data.botPresets);
+-+                if (presetPatch && presetPatch.patch.length > 0) {
+-+                    results.push(presetPatch);
+-+                }
+-+            }
+-+
+-+            // Process modules if changed
+-+            if (toSave.modules) {
+-+                const modulesPatch = await this.generateBlockPatch('modules', data.modules);
+-+                if (modulesPatch && modulesPatch.patch.length > 0) {
+-+                    results.push(modulesPatch);
+-+                }
+-+            }
+-+        } catch (error) {
+-+            console.error('[RisuSavePatcher] Error generating patches:', error);
+-+            return null;
+-+        }
+-+
+-+        return results;
+-+    }
+-+
+-+    /**
+-+     * Generate a patch for a single block by comparing with previous state.
+-+     */
+-+    private async generateBlockPatch(blockName: string, currentData: any): Promise<PatchResult | null> {
+-+        const previousData = this.previousStates.get(blockName);
+-+        if (!previousData) {
+-+            // No previous state - need full save for this block
+-+            return null;
+-+        }
+-+
+-+        const patch = compare(previousData, currentData);
+-+        if (patch.length === 0) {
+-+            return { patch: [], expectedHash: this.hashes.get(blockName)!, blockName };
+-+        }
+-+
+-+        const newHash = await calculateHash(currentData);
+-+
+-+        // Update cached state
+-+        this.previousStates.set(blockName, safeStructuredClone(currentData));
+-+        this.hashes.set(blockName, newHash);
+-+
+-+        return {
+-+            patch,
+-+            expectedHash: newHash,
+-+            blockName
+-+        };
+-+    }
+-+
+-+    /**
+-+     * Reset a specific block's cached state (e.g., after a failed patch).
+-+     */
+-+    invalidateBlock(blockName: string): void {
+-+        this.previousStates.delete(blockName);
+-+        this.hashes.delete(blockName);
+-+    }
+-+
+-+    /**
+-+     * Reset all cached state, forcing a full re-initialization.
+-+     */
+-+    reset(): void {
+-+        this.previousStates.clear();
+-+        this.hashes.clear();
+-+        this.initialized = false;
+-+    }
+-+
+-+    /**
+-+     * Get the current hash for a block.
+-+     */
+-+    getBlockHash(blockName: string): string | undefined {
+-+        return this.hashes.get(blockName);
+-+    }
+-+
+-+    get isInitialized(): boolean {
+-+        return this.initialized;
+-+    }
+-+}
 diff --git a/server/node/server.cjs b/server/node/server.cjs
-index e7c2dcac..33cf03ac 100644
+index 3b603726..1ae8fa1f 100644
 --- a/server/node/server.cjs
 +++ b/server/node/server.cjs
-@@ -5,6 +5,7 @@ const htmlparser = require('node-html-parser');
- const { existsSync, mkdirSync, readFileSync, writeFileSync } = require('fs');
- const fs = require('fs/promises')
- const nodeCrypto = require('crypto')
-+const fastJsonPatch = require('fast-json-patch');
- app.use(express.static(path.join(process.cwd(), 'dist'), {index: false}));
- app.use(express.json({ limit: '100mb' }));
- app.use(express.raw({ type: 'application/octet-stream', limit: '100mb' }));
-@@ -13,7 +14,70 @@ const {pipeline} = require('stream/promises')
- const https = require('https');
- const sslPath = path.join(process.cwd(), 'server/node/ssl/certificate');
- const hubURL = 'https://sv.risuai.xyz'; 
--const openid = require('openid-client');
-+const openid = (() => {
-+    let _mod = null;
-+    return async () => {
-+        if (!_mod) _mod = await import('openid-client');
-+        return _mod;
-+    };
-+})();
-+
-+// --- Node.js Version Guard for patch support ---
-+const nodeVersion = process.version;
-+const nodeVersionMatch = nodeVersion.match(/^v(\d+)\.(\d+)\.(\d+)/);
-+const nodeMajor = nodeVersionMatch ? parseInt(nodeVersionMatch[1]) : 0;
-+const nodeMinor = nodeVersionMatch ? parseInt(nodeVersionMatch[2]) : 0;
-+const nodePatch = nodeVersionMatch ? parseInt(nodeVersionMatch[3]) : 0;
-+const patchDisabledByVersion = (
-+    (nodeMajor === 22 && nodeMinor >= 7) ||
-+    (nodeMajor >= 23)
-+);
-+if (patchDisabledByVersion) {
-+    console.warn(`[Server] WARNING: Patch-based sync is disabled on Node.js ${nodeVersion} due to known msgpackr encoding issues.`);
-+    console.warn(`[Server] Please use Node.js v22.6.x or earlier for optimal performance.`);
-+}
-+
-+// --- In-memory file cache for patch operations ---
-+const inMemoryFileCache = new Map(); // filename -> { data: object, hash: string }
-+const pendingWrites = new Map(); // filename -> timeout ID
-+const DEBOUNCE_MS = 5000;
-+
-+function normalizeJSON(obj) {
-+    if (obj === null || typeof obj !== 'object') return obj;
-+    if (Array.isArray(obj)) return obj.map(normalizeJSON);
-+    const sorted = {};
-+    for (const key of Object.keys(obj).sort()) {
-+        sorted[key] = normalizeJSON(obj[key]);
-+    }
-+    return sorted;
-+}
-+
-+function calculateHashSync(data) {
-+    const normalized = JSON.stringify(normalizeJSON(data));
-+    return nodeCrypto.createHash('sha256').update(normalized, 'utf-8').digest('hex');
-+}
-+
-+async function debouncedWrite(filename, data) {
-+    const hexFilename = Buffer.from(filename, 'utf-8').toString('hex');
-+    if (pendingWrites.has(filename)) {
-+        clearTimeout(pendingWrites.get(filename));
-+    }
-+    pendingWrites.set(filename, setTimeout(async () => {
-+        try {
-+            const encoded = Buffer.from(JSON.stringify(data), 'utf-8');
-+            await fs.writeFile(path.join(savePath, hexFilename), encoded);
-+            // Auto-create backup
-+            const backupName = `database/dbbackup-${(Date.now() / 100).toFixed()}.bin`;
-+            const hexBackup = Buffer.from(backupName, 'utf-8').toString('hex');
-+            await fs.writeFile(path.join(savePath, hexBackup), encoded);
-+            console.log(`[Patch] Debounced write completed for: ${filename}`);
-+        } catch (err) {
-+            console.error(`[Patch] Debounced write error for ${filename}:`, err);
-+        } finally {
-+            pendingWrites.delete(filename);
-+        }
-+    }, DEBOUNCE_MS));
-+}
+@@ -57,11 +57,21 @@ const pendingWrites = new Map(); // filename -> timeout ID
+ const DEBOUNCE_MS = 5000;
  
- let password = ''
- let knownPublicKeysHashes = []
-@@ -600,9 +664,15 @@ app.get('/api/list', async (req, res, next) => {
-         return;
-     }
-     try {
-+        const prefix = req.query.prefix || '';
-         const data = (await fs.readdir(path.join(savePath))).map((v) => {
-             return Buffer.from(v, 'hex').toString('utf-8')
--        })
-+        }).filter((v) => {
-+            if (prefix) {
-+                return v.startsWith(prefix);
-+            }
-+            return true;
-+        });
-         res.send({
-             success: true,
-             content: data
-@@ -612,6 +682,96 @@ app.get('/api/list', async (req, res, next) => {
-     }
- });
- 
-+app.get('/api/patch/status', async (req, res) => {
-+    res.send({
-+        enabled: !patchDisabledByVersion,
-+        nodeVersion: nodeVersion,
-+        reason: patchDisabledByVersion ? 'Node.js version not supported for patch operations' : null
-+    });
-+});
-+
-+app.post('/api/patch', async (req, res, next) => {
-+    if(!await checkAuth(req, res)){
-+        return;
-+    }
-+
-+    if (patchDisabledByVersion) {
-+        res.status(501).send({ error: 'Patch operations disabled on this Node.js version', nodeVersion });
-+        return;
-+    }
-+
-+    try {
-+        const { filename, patch, expectedHash } = req.body;
-+
-+        if (!filename || !patch || !expectedHash) {
-+            res.status(400).send({ error: 'filename, patch, and expectedHash are required' });
-+            return;
-+        }
-+
-+        if (!isHex(Buffer.from(filename, 'utf-8').toString('hex'))) {
-+            res.status(400).send({ error: 'Invalid filename' });
-+            return;
-+        }
-+
-+        const hexFilename = Buffer.from(filename, 'utf-8').toString('hex');
-+        const filePath = path.join(savePath, hexFilename);
-+
-+        // Load current data into cache if not present
-+        let currentData;
-+        if (inMemoryFileCache.has(filename)) {
-+            currentData = inMemoryFileCache.get(filename).data;
-+        } else {
-+            if (!existsSync(filePath)) {
-+                res.status(404).send({ error: 'File not found, full save required' });
-+                return;
-+            }
-+            const raw = await fs.readFile(filePath, 'utf-8');
-+            try {
-+                currentData = JSON.parse(raw);
-+            } catch (e) {
-+                res.status(400).send({ error: 'Existing file is not valid JSON, full save required' });
-+                return;
-+            }
-+        }
-+
-+        // Apply patch
-+        const patchResult = fastJsonPatch.applyPatch(currentData, patch, true, false);
-+        const patchedData = patchResult.newDocument;
-+
-+        // Verify hash
-+        const serverHash = calculateHashSync(patchedData);
-+        if (serverHash !== expectedHash) {
-+            // Invalidate cache on mismatch
-+            inMemoryFileCache.delete(filename);
-+            res.status(409).send({
-+                error: 'Hash mismatch',
-+                serverHash,
-+                expectedHash,
-+                message: 'Data integrity check failed. Please perform a full save.'
-+            });
-+            return;
-+        }
-+
-+        // Update in-memory cache
-+        inMemoryFileCache.set(filename, { data: patchedData, hash: serverHash });
-+
-+        // Debounced disk write + backup
-+        await debouncedWrite(filename, patchedData);
-+
-+        res.send({
-+            success: true,
-+            hash: serverHash
-+        });
-+    } catch (error) {
-+        console.error('[Patch] Error:', error);
-+        // Invalidate cache on error
-+        if (req.body && req.body.filename) {
-+            inMemoryFileCache.delete(req.body.filename);
-+        }
-+        res.status(500).send({ error: 'Patch operation failed: ' + error.message });
-+    }
-+});
-+
- app.post('/api/write', async (req, res, next) => {
-     if(!await checkAuth(req, res)){
-         return;
-@@ -656,7 +816,8 @@ app.get('/api/oauth_login', async (req, res) => {
-         return
-     }
-     if(!oauthData.client_id || !oauthData.client_secret){
--        const discovery = await openid.discovery('https://account.sionyw.com/','','');
-+        const openidMod = await openid();
-+        const discovery = await openidMod.discovery('https://account.sionyw.com/','','');
-         oauthData.config = discovery;
- 
-         //oauth dynamic client registration
-@@ -698,11 +859,12 @@ app.get('/api/oauth_login', async (req, res) => {
- 
-         //now lets request
- 
--        let code_verifier = openid.randomPKCECodeVerifier();
--        let code_challenge = await openid.calculatePKCECodeChallenge(code_verifier);
-+        const openidMod2 = await openid();
-+        let code_verifier = openidMod2.randomPKCECodeVerifier();
-+        let code_challenge = await openidMod2.calculatePKCECodeChallenge(code_verifier);
- 
-         oauthData.code_verifier = code_verifier;
--        let redirectTo = openid.buildAuthorizationUrl(oauthData.config, {
-+        let redirectTo = openidMod2.buildAuthorizationUrl(oauthData.config, {
-             redirect_uri,
-             code_challenge,
-             code_challenge_method: 'S256',
-@@ -734,7 +896,8 @@ app.get('/api/oauth_callback', async (req, res) => {
-         return
-     }
- 
--    let tokens = await openid.authorizationCodeGrant(
-+    const openidMod3 = await openid();
-+    let tokens = await openidMod3.authorizationCodeGrant(
-         oauthData.config,   
-         getCurrentUrl(),
-         {
-diff --git a/src/ts/globalApi.svelte.ts b/src/ts/globalApi.svelte.ts
-index dbbd0364..0c968576 100644
---- a/src/ts/globalApi.svelte.ts
-+++ b/src/ts/globalApi.svelte.ts
-@@ -25,7 +25,9 @@ import { characterURLImport, hubURL } from "./characterCards";
- import { defaultJailbreak, defaultMainPrompt, oldJailbreak, oldMainPrompt } from "./storage/defaultPrompts";
- import { loadRisuAccountData } from "./drive/accounter";
- import { decodeRisuSave, encodeRisuSaveLegacy, RisuSaveEncoder, type toSaveType } from "./storage/risuSave";
-+import { RisuSavePatcher } from "./storage/risuSavePatcher";
- import { AutoStorage } from "./storage/autoStorage";
-+import { NodeStorage } from "./storage/nodeStorage";
- import { updateAnimationSpeed } from "./gui/animation";
- import { updateColorScheme, updateTextThemeAndCSS } from "./gui/colorscheme";
- import { autoServerBackup, saveDbKei } from "./kei/backup";
-@@ -380,6 +382,33 @@ export async function saveDb() {
- 
-     let savetrys = 0
-     let lastDbData = new Uint8Array(0)
-+
-+    // --- Patch-based save setup for Node server ---
-+    let patcher: RisuSavePatcher | null = null;
-+    let patchSupported = false;
-+    let usePatchSave = false;
-+
-+    if (isNodeServer && !forageStorage.isAccount) {
-+        try {
-+            const nodeStorage = new NodeStorage();
-+            patchSupported = await nodeStorage.checkPatchSupport();
-+            if (patchSupported) {
-+                patcher = new RisuSavePatcher();
-+                const seedData = await patcher.init(getDatabase());
-+                usePatchSave = true;
-+                console.log('[saveDb] Patch-based save enabled. Seeding initial files...');
-+                // Seed initial data to server
-+                for (const [blockName, blockData] of seedData.entries()) {
-+                    const uint8Data = new TextEncoder().encode(JSON.stringify(blockData));
-+                    await nodeStorage.setItem(`database/${blockName}.json`, uint8Data);
-+                }
-+                console.log('[saveDb] Seeding complete.');
-+            }
-+        } catch (e) {
-+            console.warn('[saveDb] Failed to initialize patcher, using full save:', e);
-+        }
-+    }
-+
-     await sleep(1000)
-     while (true) {
-         if (!changed) {
-@@ -398,6 +427,18 @@ export async function saveDb() {
-                     skipRemoteSavingOnCharacters: false
-                 })
-                 requiresFullEncoderReload.state = false
-+                // Re-init patcher on full reload
-+                if (patcher) {
-+                    patcher.reset();
-+                    const seedData = await patcher.init(getDatabase());
-+                    if (isNodeServer && !forageStorage.isAccount) {
-+                        const nodeStorage = new NodeStorage();
-+                        for (const [blockName, blockData] of seedData.entries()) {
-+                            const uint8Data = new TextEncoder().encode(JSON.stringify(blockData));
-+                            await nodeStorage.setItem(`database/${blockName}.json`, uint8Data);
-+                        }
-+                    }
-+                }
-             }
- 
-             let toSave = safeStructuredClone(changeTracker)
-@@ -419,27 +460,85 @@ export async function saveDb() {
-                 continue
-             }
- 
--            await encoder.set(db, toSave)
--            const encoded = encoder.encode()
--            if (!encoded) {
--                await sleep(1000)
--                continue
--            }
--            const dbData = new Uint8Array(encoded)
--            if (isTauri) {
--                await writeFile('database/database.bin', dbData, { baseDir: BaseDirectory.AppData });
--                await writeFile(`database/dbbackup-${(Date.now() / 100).toFixed()}.bin`, dbData, { baseDir: BaseDirectory.AppData });
-+            // --- Try patch-based save for NodeServer ---
-+            let patchSaveSuccess = false;
-+            if (usePatchSave && patcher && isNodeServer && !forageStorage.isAccount) {
-+                try {
-+                    const patches = await patcher.generatePatches(db, toSave);
-+                    if (patches && patches.length > 0) {
-+                        const nodeStorage = new NodeStorage();
-+                        let allPatchesSucceeded = true;
-+                        for (const p of patches) {
-+                            const filename = `database/${p.blockName}.json`;
-+                            const result = await nodeStorage.patchItem(filename, p.patch, p.expectedHash);
-+                            if (result === null) {
-+                                // Hash mismatch or server error - fallback to full save
-+                                allPatchesSucceeded = false;
-+                                console.warn(`[saveDb] Patch failed for block ${p.blockName}, falling back to full save`);
-+                                patcher.invalidateBlock(p.blockName);
-+                                break;
-+                            }
-+                        }
-+                        if (allPatchesSucceeded) {
-+                            patchSaveSuccess = true;
-+                        }
-+                    } else if (patches && patches.length === 0) {
-+                        // No changes - skip save
-+                        patchSaveSuccess = true;
-+                    }
-+                    // patches === null means patcher couldn't generate (new character etc), fall through to full save
-+                } catch (e) {
-+                    console.warn('[saveDb] Patch save error, falling back to full save:', e);
-+                    patcher.reset();
-+                    const seedData = await patcher.init(db);
-+                    if (isNodeServer && !forageStorage.isAccount) {
-+                        const nodeStorage = new NodeStorage();
-+                        for (const [blockName, blockData] of seedData.entries()) {
-+                            const uint8Data = new TextEncoder().encode(JSON.stringify(blockData));
-+                            await nodeStorage.setItem(`database/${blockName}.json`, uint8Data);
-+                        }
-+                    }
-+                }
-             }
--            else {
- 
--                await forageStorage.setItem('database/database.bin', dbData)
--                if (!forageStorage.isAccount) {
--                    await forageStorage.setItem(`database/dbbackup-${(Date.now() / 100).toFixed()}.bin`, dbData)
-+            // --- Full save (original or fallback) ---
-+            if (!patchSaveSuccess) {
-+                await encoder.set(db, toSave)
-+                const encoded = encoder.encode()
-+                if (!encoded) {
-+                    await sleep(1000)
-+                    continue
-                 }
--                if (forageStorage.isAccount) {
--                    await sleep(3000)
-+                const dbData = new Uint8Array(encoded)
-+                if (isTauri) {
-+                    await writeFile('database/database.bin', dbData, { baseDir: BaseDirectory.AppData });
-+                    await writeFile(`database/dbbackup-${(Date.now() / 100).toFixed()}.bin`, dbData, { baseDir: BaseDirectory.AppData });
-+                }
-+                else {
-+
-+                    await forageStorage.setItem('database/database.bin', dbData)
-+                    if (!forageStorage.isAccount) {
-+                        await forageStorage.setItem(`database/dbbackup-${(Date.now() / 100).toFixed()}.bin`, dbData)
-+                    }
-+                    if (forageStorage.isAccount) {
-+                        await sleep(3000)
-+                    }
-+                }
-+
-+                // Re-sync patcher state after full save
-+                if (patcher) {
-+                    patcher.reset();
-+                    const seedData = await patcher.init(db);
-+                    if (isNodeServer && !forageStorage.isAccount) {
-+                        const nodeStorage = new NodeStorage();
-+                        for (const [blockName, blockData] of seedData.entries()) {
-+                            const uint8Data = new TextEncoder().encode(JSON.stringify(blockData));
-+                            await nodeStorage.setItem(`database/${blockName}.json`, uint8Data);
-+                        }
-+                    }
-                 }
-             }
-+
-             if (!forageStorage.isAccount) {
-                 await getDbBackups()
-             }
-@@ -488,7 +587,17 @@ export async function getDbBackups() {
-         return backups
-     }
-     else {
--        const keys = await forageStorage.keys()
-+        let keys: string[];
-+        // Use prefix-based filtering for NodeServer to reduce traffic
-+        if (isNodeServer && forageStorage.realStorage instanceof NodeStorage) {
-+            try {
-+                keys = await (forageStorage.realStorage as NodeStorage).listItemsWithPrefix('database/dbbackup-');
-+            } catch (e) {
-+                keys = await forageStorage.keys();
-+            }
-+        } else {
-+            keys = await forageStorage.keys();
-+        }
- 
-         const backups = keys
-             .filter(key => key.startsWith('database/dbbackup-'))
-diff --git a/src/ts/storage/nodeStorage.ts b/src/ts/storage/nodeStorage.ts
-index 59d5ca44..7420fb77 100644
---- a/src/ts/storage/nodeStorage.ts
-+++ b/src/ts/storage/nodeStorage.ts
-@@ -1,6 +1,7 @@
- import { language } from "src/lang"
- import { alertError, alertInput, waitAlert } from "../alert"
- import { base64url, getKeypairStore, saveKeypairStore } from "../util"
-+import type { Operation } from 'fast-json-patch'
- 
- 
- export class NodeStorage{
-@@ -188,6 +189,92 @@ export class NodeStorage{
-     }
- 
-     listItem = this.keys
-+
-+    private patchSupportCache: boolean | null = null;
-+
-+    /**
-+     * Check if the server supports patch operations.
-+     * Caches the result for subsequent calls.
-+     */
-+    async checkPatchSupport(): Promise<boolean> {
-+        if (this.patchSupportCache !== null) {
-+            return this.patchSupportCache;
-+        }
-+        try {
-+            const da = await fetch('/api/patch/status', {
-+                method: 'GET'
-+            });
-+            if (da.status >= 200 && da.status < 300) {
-+                const data = await da.json();
-+                this.patchSupportCache = data.enabled === true;
-+                if (!this.patchSupportCache) {
-+                    console.warn(`[NodeStorage] Patch disabled by server: ${data.reason}`);
-+                }
-+                return this.patchSupportCache;
-+            }
-+        } catch (error) {
-+            console.warn('[NodeStorage] Could not check patch support:', error);
-+        }
-+        this.patchSupportCache = false;
-+        return false;
-+    }
-+
-+    /**
-+     * Send a JSON patch to the server.
-+     * Returns the server hash on success, or null on failure (hash mismatch, etc).
-+     */
-+    async patchItem(filename: string, patch: Operation[], expectedHash: string): Promise<string | null> {
-+        await this.checkAuth();
-+        try {
-+            const da = await fetch('/api/patch', {
-+                method: 'POST',
-+                body: JSON.stringify({ filename, patch, expectedHash }),
-+                headers: {
-+                    'content-type': 'application/json',
-+                    'risu-auth': await this.createAuth()
-+                }
-+            });
-+            if (da.status === 409) {
-+                console.warn('[NodeStorage] Patch hash mismatch, full save required');
-+                return null;
-+            }
-+            if (da.status === 501) {
-+                console.warn('[NodeStorage] Patch not supported by server');
-+                this.patchSupportCache = false;
-+                return null;
-+            }
-+            if (da.status < 200 || da.status >= 300) {
-+                console.error('[NodeStorage] Patch failed with status:', da.status);
-+                return null;
-+            }
-+            const data = await da.json();
-+            return data.hash || null;
-+        } catch (error) {
-+            console.error('[NodeStorage] Patch request error:', error);
-+            return null;
-+        }
-+    }
-+
-+    /**
-+     * List files with a specific prefix filter.
-+     */
-+    async listItemsWithPrefix(prefix: string): Promise<string[]> {
-+        await this.checkAuth();
-+        const da = await fetch(`/api/list?prefix=${encodeURIComponent(prefix)}`, {
-+            method: 'GET',
-+            headers: {
-+                'risu-auth': await this.createAuth()
-+            }
-+        });
-+        if (da.status < 200 || da.status >= 300) {
-+            throw 'listItemsWithPrefix Error';
-+        }
-+        const data = await da.json();
-+        if (data.error) {
-+            throw data.error;
-+        }
-+        return data.content;
-+    }
- }
- 
- async function digestPassword(message:string) {
-diff --git a/src/ts/storage/patchUtils.ts b/src/ts/storage/patchUtils.ts
-new file mode 100644
-index 00000000..8ca1f903
---- /dev/null
-+++ b/src/ts/storage/patchUtils.ts
-@@ -0,0 +1,33 @@
-+/**
-+ * Utility functions for JSON patch operations.
-+ * Used by RisuSavePatcher for generating normalized hashes.
-+ */
-+
-+/**
-+ * Recursively normalizes a JSON object by sorting all keys alphabetically.
-+ * This ensures that structurally identical objects produce the same hash
-+ * regardless of key insertion order.
-+ */
-+export function normalizeJSON(obj: any): any {
+ function normalizeJSON(obj) {
+-    if (obj === null || typeof obj !== 'object') return obj;
+-    if (Array.isArray(obj)) return obj.map(normalizeJSON);
 +    if (obj === null || obj === undefined) return obj;
++    if (obj instanceof Date) return obj.toISOString();
++    
 +    if (typeof obj !== 'object') return obj;
-+    if (Array.isArray(obj)) return obj.map(normalizeJSON);
-+
-+    const sorted: Record<string, any> = {};
-+    for (const key of Object.keys(obj).sort()) {
-+        sorted[key] = normalizeJSON(obj[key]);
++    
++    if (Array.isArray(obj)) {
++        return obj.map(item => item === undefined ? null : normalizeJSON(item));
 +    }
-+    return sorted;
-+}
 +
-+/**
-+ * Calculates a SHA-256 hash of the given data after normalizing it.
-+ * Uses Web Crypto API for browser compatibility.
-+ */
-+export async function calculateHash(data: any): Promise<string> {
-+    const normalized = JSON.stringify(normalizeJSON(data));
-+    const encoded = new TextEncoder().encode(normalized);
-+    const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
-+    const hashArray = Array.from(new Uint8Array(hashBuffer));
-+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-+}
-diff --git a/src/ts/storage/risuSavePatcher.ts b/src/ts/storage/risuSavePatcher.ts
-new file mode 100644
-index 00000000..f656b7ac
---- /dev/null
-+++ b/src/ts/storage/risuSavePatcher.ts
-@@ -0,0 +1,210 @@
-+/**
-+ * RisuSavePatcher - Efficient patch-based save system for Node.js server mode.
-+ * 
-+ * Instead of sending the entire database (~100MB) on each save,
-+ * this class generates JSON patches (~10KB) of only the changed data
-+ * and sends them to the server for in-memory application.
-+ * 
-+ * Uses fast-json-patch for diff generation and custom hash functions
-+ * for data integrity verification.
-+ */
-+
-+import { compare, type Operation } from 'fast-json-patch';
-+import type { Database } from './database.svelte';
-+import type { toSaveType } from './risuSave';
-+import { normalizeJSON, calculateHash } from './patchUtils';
-+
-+declare function safeStructuredClone<T>(data: T): T;
-+
-+export interface PatchResult {
-+    /** The JSON patch operations to send */
-+    patch: Operation[];
-+    /** The expected hash after applying the patch */
-+    expectedHash: string;
-+    /** The block name that was patched */
-+    blockName: string;
-+}
-+
-+export class RisuSavePatcher {
-+    /** Previous state snapshots for each block, keyed by block name */
-+    private previousStates: Map<string, any> = new Map();
-+    /** Cached hashes for each block */
-+    private hashes: Map<string, string> = new Map();
-+    /** Whether the patcher has been initialized with a full state */
-+    private initialized: boolean = false;
-+
-+    /**
-+     * Initialize the patcher with the full database state.
-+     * Returns a map of blockName -> data for initial seeding to the server.
-+     * The caller should write these as JSON files so that /api/patch can find them.
-+     */
-+    async init(data: Database): Promise<Map<string, any>> {
-+        const seedData = new Map<string, any>();
-+
-+        // Store root state (everything except characters, botPresets, modules)
-+        const rootObj: Record<string, any> = {};
-+        for (const key of Object.keys(data)) {
-+            if (key !== 'characters' && key !== 'botPresets' && key !== 'modules') {
-+                rootObj[key] = data[key];
-+            }
+     const sorted = {};
+     for (const key of Object.keys(obj).sort()) {
+-        sorted[key] = normalizeJSON(obj[key]);
++        const val = obj[key];
++        if (val !== undefined && typeof val !== 'function') {
++            sorted[key] = normalizeJSON(val);
 +        }
-+        this.previousStates.set('root', safeStructuredClone(rootObj));
-+        this.hashes.set('root', await calculateHash(rootObj));
-+        seedData.set('root', rootObj);
-+
-+        // Store preset state
-+        this.previousStates.set('preset', safeStructuredClone(data.botPresets));
-+        this.hashes.set('preset', await calculateHash(data.botPresets));
-+        seedData.set('preset', data.botPresets);
-+
-+        // Store modules state
-+        this.previousStates.set('modules', safeStructuredClone(data.modules));
-+        this.hashes.set('modules', await calculateHash(data.modules));
-+        seedData.set('modules', data.modules);
-+
-+        // Store character states
-+        for (const character of data.characters) {
-+            this.previousStates.set(character.chaId, safeStructuredClone(character));
-+            this.hashes.set(character.chaId, await calculateHash(character));
-+            seedData.set(character.chaId, character);
+     }
+     return sorted;
+ }
+diff --git a/src/ts/storage/patchUtils.ts b/src/ts/storage/patchUtils.ts
+index 8ca1f903..068b88c7 100644
+--- a/src/ts/storage/patchUtils.ts
++++ b/src/ts/storage/patchUtils.ts
+@@ -10,12 +10,20 @@
+  */
+ export function normalizeJSON(obj: any): any {
+     if (obj === null || obj === undefined) return obj;
++    if (obj instanceof Date) return obj.toISOString();
++    
+     if (typeof obj !== 'object') return obj;
+-    if (Array.isArray(obj)) return obj.map(normalizeJSON);
++    
++    if (Array.isArray(obj)) {
++        return obj.map(item => item === undefined ? null : normalizeJSON(item));
++    }
+ 
+     const sorted: Record<string, any> = {};
+     for (const key of Object.keys(obj).sort()) {
+-        sorted[key] = normalizeJSON(obj[key]);
++        const val = obj[key];
++        if (val !== undefined && typeof val !== 'function') {
++            sorted[key] = normalizeJSON(val);
 +        }
-+
-+        this.initialized = true;
-+        return seedData;
-+    }
-+
-+    /**
-+     * Generate patches for the changed blocks. Uses changeTracker to only
-+     * process modified data, minimizing computation.
-+     * 
-+     * @returns Array of patch results, or null if a full save is needed
-+     */
-+    async generatePatches(data: Database, toSave: toSaveType): Promise<PatchResult[] | null> {
-+        if (!this.initialized) {
-+            return null;
-+        }
-+
-+        const results: PatchResult[] = [];
-+
-+        try {
-+            // Process root (non-character, non-preset, non-module fields)
-+            const rootObj: Record<string, any> = {};
-+            for (const key of Object.keys(data)) {
-+                if (key !== 'characters' && key !== 'botPresets' && key !== 'modules') {
-+                    rootObj[key] = data[key];
-+                }
-+            }
-+            const rootPatch = await this.generateBlockPatch('root', rootObj);
-+            if (rootPatch && rootPatch.patch.length > 0) {
-+                results.push(rootPatch);
-+            }
-+
-+            // Process changed characters
-+            const processedCharIds = new Set<string>();
-+            for (const chaId of toSave.character) {
-+                const character = data.characters.find(c => c.chaId === chaId);
-+                if (character) {
-+                    const charPatch = await this.generateBlockPatch(chaId, character);
-+                    if (charPatch && charPatch.patch.length > 0) {
-+                        results.push(charPatch);
-+                    }
-+                    processedCharIds.add(chaId);
-+                }
-+            }
-+
-+            // Process new characters (not in previousStates)
-+            for (const character of data.characters) {
-+                if (!processedCharIds.has(character.chaId) && !this.previousStates.has(character.chaId)) {
-+                    // New character - needs full save for this block, return null
-+                    return null;
-+                }
-+            }
-+
-+            // Check for deleted characters
-+            for (const [key] of this.previousStates) {
-+                if (key === 'root' || key === 'preset' || key === 'modules') continue;
-+                if (!data.characters.find(c => c.chaId === key)) {
-+                    // Character deleted - needs full save
-+                    return null;
-+                }
-+            }
-+
-+            // Process presets if changed
-+            if (toSave.botPreset) {
-+                const presetPatch = await this.generateBlockPatch('preset', data.botPresets);
-+                if (presetPatch && presetPatch.patch.length > 0) {
-+                    results.push(presetPatch);
-+                }
-+            }
-+
-+            // Process modules if changed
-+            if (toSave.modules) {
-+                const modulesPatch = await this.generateBlockPatch('modules', data.modules);
-+                if (modulesPatch && modulesPatch.patch.length > 0) {
-+                    results.push(modulesPatch);
-+                }
-+            }
-+        } catch (error) {
-+            console.error('[RisuSavePatcher] Error generating patches:', error);
-+            return null;
-+        }
-+
-+        return results;
-+    }
-+
-+    /**
-+     * Generate a patch for a single block by comparing with previous state.
-+     */
-+    private async generateBlockPatch(blockName: string, currentData: any): Promise<PatchResult | null> {
-+        const previousData = this.previousStates.get(blockName);
-+        if (!previousData) {
-+            // No previous state - need full save for this block
-+            return null;
-+        }
-+
-+        const patch = compare(previousData, currentData);
-+        if (patch.length === 0) {
-+            return { patch: [], expectedHash: this.hashes.get(blockName)!, blockName };
-+        }
-+
-+        const newHash = await calculateHash(currentData);
-+
-+        // Update cached state
-+        this.previousStates.set(blockName, safeStructuredClone(currentData));
-+        this.hashes.set(blockName, newHash);
-+
-+        return {
-+            patch,
-+            expectedHash: newHash,
-+            blockName
-+        };
-+    }
-+
-+    /**
-+     * Reset a specific block's cached state (e.g., after a failed patch).
-+     */
-+    invalidateBlock(blockName: string): void {
-+        this.previousStates.delete(blockName);
-+        this.hashes.delete(blockName);
-+    }
-+
-+    /**
-+     * Reset all cached state, forcing a full re-initialization.
-+     */
-+    reset(): void {
-+        this.previousStates.clear();
-+        this.hashes.clear();
-+        this.initialized = false;
-+    }
-+
-+    /**
-+     * Get the current hash for a block.
-+     */
-+    getBlockHash(blockName: string): string | undefined {
-+        return this.hashes.get(blockName);
-+    }
-+
-+    get isInitialized(): boolean {
-+        return this.initialized;
-+    }
-+}
+     }
+     return sorted;
+ }
