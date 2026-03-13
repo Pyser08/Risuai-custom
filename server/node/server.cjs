@@ -1,4 +1,5 @@
 const express = require('express');
+const compression = require('compression')
 const app = express();
 const path = require('path');
 const htmlparser = require('node-html-parser');
@@ -6,14 +7,27 @@ const { existsSync, mkdirSync, readFileSync, writeFileSync } = require('fs');
 const fs = require('fs/promises')
 const nodeCrypto = require('crypto')
 const fastJsonPatch = require('fast-json-patch');
-app.use(express.static(path.join(process.cwd(), 'dist'), {index: false}));
+app.use(compression({
+
+    filter: (req, res) => {
+
+        const type = res.getHeader('Content-Type');
+
+        if (type === 'application/octet-stream') return true;
+
+        return compression.filter(req, res);
+
+    }
+
+}));
+app.use(express.static(path.join(process.cwd(), 'dist'), { index: false }));
 app.use(express.json({ limit: '100mb' }));
 app.use(express.raw({ type: 'application/octet-stream', limit: '100mb' }));
 app.use(express.text({ limit: '100mb' }));
-const {pipeline} = require('stream/promises')
+const { pipeline } = require('stream/promises')
 const https = require('https');
 const sslPath = path.join(process.cwd(), 'server/node/ssl/certificate');
-const hubURL = 'https://sv.risuai.xyz'; 
+const hubURL = 'https://sv.risuai.xyz';
 const openid = (() => {
     let _mod = null;
     return async () => {
@@ -83,12 +97,12 @@ let password = ''
 let knownPublicKeysHashes = []
 
 const savePath = path.join(process.cwd(), "save")
-if(!existsSync(savePath)){
+if (!existsSync(savePath)) {
     mkdirSync(savePath)
 }
 
 const passwordPath = path.join(process.cwd(), 'save', '__password')
-if(existsSync(passwordPath)){
+if (existsSync(passwordPath)) {
     password = readFileSync(passwordPath, 'utf-8')
 }
 
@@ -99,7 +113,7 @@ function isHex(str) {
     return hexRegex.test(str.toUpperCase().trim()) || str === '__password';
 }
 
-async function hashJSON(json){
+async function hashJSON(json) {
     const hash = nodeCrypto.createHash('sha256');
     hash.update(JSON.stringify(json));
     return hash.digest('hex');
@@ -110,13 +124,13 @@ app.get('/', async (req, res, next) => {
     const clientIP = req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || 'Unknown IP';
     const timestamp = new Date().toISOString();
     console.log(`[Server] ${timestamp} | Connection from: ${clientIP}`);
-    
+
     try {
         const mainIndex = await fs.readFile(path.join(process.cwd(), 'dist', 'index.html'))
         const root = htmlparser.parse(mainIndex)
         const head = root.querySelector('head')
         head.innerHTML = `<script>globalThis.__NODE__ = true</script>` + head.innerHTML
-        
+
         res.send(root.toString())
     } catch (error) {
         console.log(error)
@@ -124,17 +138,17 @@ app.get('/', async (req, res, next) => {
     }
 })
 
-async function checkAuth(req, res, returnOnlyStatus = false){
+async function checkAuth(req, res, returnOnlyStatus = false) {
     try {
         const authHeader = req.headers['risu-auth'];
 
-        if(!authHeader){
+        if (!authHeader) {
             console.log('No auth header')
-            if(returnOnlyStatus){
+            if (returnOnlyStatus) {
                 return false;
             }
             res.status(400).send({
-                error:'No auth header'
+                error: 'No auth header'
             });
             return false
         }
@@ -156,42 +170,42 @@ async function checkAuth(req, res, returnOnlyStatus = false){
         //signature
         const signature = Buffer.from(signatureB64, 'base64url');
 
-        
+
         //check expiration
         const now = Math.floor(Date.now() / 1000);
-        if(jsonPayload.exp < now){
+        if (jsonPayload.exp < now) {
             console.log('Token expired')
-            if(returnOnlyStatus){
+            if (returnOnlyStatus) {
                 return false;
             }
             res.status(400).send({
-                error:'Token Expired'
+                error: 'Token Expired'
             });
             return false
         }
 
         //check if public key is known
         const pubKeyHash = await hashJSON(jsonPayload.pub)
-        if(!knownPublicKeysHashes.includes(pubKeyHash)){
+        if (!knownPublicKeysHashes.includes(pubKeyHash)) {
             console.log('Unknown public key')
-            if(returnOnlyStatus){
+            if (returnOnlyStatus) {
                 return false;
             }
             res.status(400).send({
-                error:'Unknown Public Key'
+                error: 'Unknown Public Key'
             });
             return false
         }
 
         //check signature
-        if(jsonHeader.alg !== "ES256"){
+        if (jsonHeader.alg !== "ES256") {
             //only support ECDSA for now
             console.log('Unsupported algorithm')
-            if(returnOnlyStatus){
+            if (returnOnlyStatus) {
                 return false;
             }
             res.status(400).send({
-                error:'Unsupported Algorithm'
+                error: 'Unsupported Algorithm'
             });
             return false
         }
@@ -199,7 +213,7 @@ async function checkAuth(req, res, returnOnlyStatus = false){
         const isValid = await crypto.subtle.verify(
             {
                 name: 'ECDSA',
-                hash: {name: 'SHA-256'},
+                hash: { name: 'SHA-256' },
             },
             await crypto.subtle.importKey(
                 'jwk',
@@ -215,53 +229,53 @@ async function checkAuth(req, res, returnOnlyStatus = false){
             Buffer.from(`${jsonHeaderB64}.${jsonPayloadB64}`)
         );
 
-        if(!isValid){
+        if (!isValid) {
             console.log('Invalid signature')
-            if(returnOnlyStatus){
+            if (returnOnlyStatus) {
                 return false;
             }
             res.status(400).send({
-                error:'Invalid Signature'
+                error: 'Invalid Signature'
             });
             return false
         }
-        
-        return true   
+
+        return true
     } catch (error) {
         console.log(error)
-        if(returnOnlyStatus){
+        if (returnOnlyStatus) {
             return false;
         }
         res.status(500).send({
-            error:'Internal Server Error'
+            error: 'Internal Server Error'
         });
         return false
     }
 }
 
 const reverseProxyFunc = async (req, res, next) => {
-    if(!await checkAuth(req, res)){
+    if (!await checkAuth(req, res)) {
         return;
     }
-    
+
     const urlParam = req.headers['risu-url'] ? decodeURIComponent(req.headers['risu-url']) : req.query.url;
 
     if (!urlParam) {
         res.status(400).send({
-            error:'URL has no param'
+            error: 'URL has no param'
         });
         return;
     }
     const header = req.headers['risu-header'] ? JSON.parse(decodeURIComponent(req.headers['risu-header'])) : req.headers;
-    if(!header['x-forwarded-for']){
+    if (!header['x-forwarded-for']) {
         header['x-forwarded-for'] = req.ip
     }
 
-    if(req.headers['authorization']?.startsWith('X-SERVER-REGISTER')){
-        if(!existsSync(authCodePath)){
+    if (req.headers['authorization']?.startsWith('X-SERVER-REGISTER')) {
+        if (!existsSync(authCodePath)) {
             delete header['authorization']
         }
-        else{
+        else {
             const authCode = await fs.readFile(authCodePath, {
                 encoding: 'utf-8'
             })
@@ -305,20 +319,20 @@ const reverseProxyFunc = async (req, res, next) => {
 }
 
 const reverseProxyFunc_get = async (req, res, next) => {
-    if(!await checkAuth(req, res)){
+    if (!await checkAuth(req, res)) {
         return;
     }
-    
+
     const urlParam = req.headers['risu-url'] ? decodeURIComponent(req.headers['risu-url']) : req.query.url;
 
     if (!urlParam) {
         res.status(400).send({
-            error:'URL has no param'
+            error: 'URL has no param'
         });
         return;
     }
     const header = req.headers['risu-header'] ? JSON.parse(decodeURIComponent(req.headers['risu-header'])) : req.headers;
-    if(!header['x-forwarded-for']){
+    if (!header['x-forwarded-for']) {
         header['x-forwarded-for'] = req.ip
     }
     let originalResponse;
@@ -359,7 +373,7 @@ let accessTokenCache = {
     expiry: 0
 }
 async function getSionywAccessToken() {
-    if(accessTokenCache.token && Date.now() < accessTokenCache.expiry){
+    if (accessTokenCache.token && Date.now() < accessTokenCache.expiry) {
         return accessTokenCache.token;
     }
     //Schema of the client data file
@@ -368,12 +382,12 @@ async function getSionywAccessToken() {
     //     client_id: string;
     //     client_secret: string;
     // }
-    
+
     const clientDataPath = path.join(process.cwd(), 'save', '__sionyw_client_data.json');
     let refreshToken = ''
     let clientId = ''
     let clientSecret = ''
-    if(!existsSync(clientDataPath)){
+    if (!existsSync(clientDataPath)) {
         throw new Error('No Sionyw client data found');
     }
     const clientDataRaw = readFileSync(clientDataPath, 'utf-8');
@@ -383,7 +397,7 @@ async function getSionywAccessToken() {
     clientSecret = clientData.client_secret;
 
     //Oauth Refresh Token Flow
-    
+
     const tokenResponse = await fetch('account.sionyw.com/account/api/oauth/token', {
         method: 'POST',
         headers: {
@@ -397,14 +411,14 @@ async function getSionywAccessToken() {
         })
     })
 
-    if(!tokenResponse.ok){
+    if (!tokenResponse.ok) {
         throw new Error('Failed to refresh Sionyw access token');
     }
 
     const tokenData = await tokenResponse.json();
 
     //Update the refresh token in the client data file
-    if(tokenData.refresh_token && tokenData.refresh_token !== refreshToken){
+    if (tokenData.refresh_token && tokenData.refresh_token !== refreshToken) {
         clientData.refresh_token = tokenData.refresh_token;
         writeFileSync(clientDataPath, JSON.stringify(clientData), 'utf-8');
     }
@@ -434,7 +448,7 @@ async function hubProxyFunc(req, res) {
             const pathAndQuery = req.originalUrl.replace(/^\/hub-proxy/, '');
             externalURL = hubURL + pathAndQuery;
         }
-        
+
         const headersToSend = { ...req.headers };
         delete headersToSend.host;
         delete headersToSend.connection;
@@ -445,17 +459,17 @@ async function hubProxyFunc(req, res) {
         headersToSend.origin = hubOrigin;
 
         //if Authorization header is "Server-Auth, set the token to be Server-Auth
-        if(headersToSend['Authorization'] === 'X-Node-Server-Auth'){
+        if (headersToSend['Authorization'] === 'X-Node-Server-Auth') {
             //this requires password auth
-            if(!await checkAuth(req, res)){
+            if (!await checkAuth(req, res)) {
                 return;
             }
 
             headersToSend['Authorization'] = "Bearer " + await getSionywAccessToken();
             delete headersToSend['risu-auth'];
         }
-        
-        
+
+
         const response = await fetch(externalURL, {
             method: req.method,
             headers: headersToSend,
@@ -463,7 +477,7 @@ async function hubProxyFunc(req, res) {
             redirect: 'manual',
             duplex: 'half'
         });
-        
+
         for (const [key, value] of response.headers.entries()) {
             // Skip encoding-related headers to prevent double decoding
             if (excludedHeaders.includes(key.toLowerCase())) {
@@ -497,13 +511,13 @@ async function hubProxyFunc(req, res) {
             }
             return;
         }
-        
+
         if (response.body) {
             await pipeline(response.body, res);
         } else {
             res.end();
         }
-        
+
     } catch (error) {
         console.error("[Hub Proxy] Error:", error);
         if (!res.headersSent) {
@@ -534,16 +548,16 @@ app.post('/hub-proxy/*', hubProxyFunc);
 //     }
 // })
 
-app.get('/api/test_auth', async(req, res) => {
+app.get('/api/test_auth', async (req, res) => {
 
-    if(!password){
-        res.send({status: 'unset'})
+    if (!password) {
+        res.send({ status: 'unset' })
     }
-    else if(!await checkAuth(req, res, true)){
-        res.send({status: 'incorrect'})
+    else if (!await checkAuth(req, res, true)) {
+        res.send({ status: 'incorrect' })
     }
-    else{
-        res.send({status: 'success'})
+    else {
+        res.send({ status: 'success' })
     }
 })
 
@@ -551,29 +565,29 @@ let loginTries = 0;
 let loginTriesResetsIn = 0;
 app.post('/api/login', async (req, res) => {
 
-    if(loginTriesResetsIn < Date.now()){
+    if (loginTriesResetsIn < Date.now()) {
         loginTriesResetsIn = Date.now() + (30 * 1000); //30 seconds
         loginTries = 0;
     }
 
-    if(loginTries >= 10){
-        res.status(429).send({error: 'Too many attempts. Please wait and try again later.'})
+    if (loginTries >= 10) {
+        res.status(429).send({ error: 'Too many attempts. Please wait and try again later.' })
         return;
     }
-    else{
+    else {
         loginTries++;
     }
 
-    if(password === ''){
-        res.status(400).send({error: 'Password not set'})
+    if (password === '') {
+        res.status(400).send({ error: 'Password not set' })
         return;
     }
-    if(req.body.password && req.body.password.trim() === password.trim()){
+    if (req.body.password && req.body.password.trim() === password.trim()) {
         knownPublicKeysHashes.push(await hashJSON(req.body.publicKey))
-        res.send({status:'success'})
+        res.send({ status: 'success' })
     }
-    else{
-        res.status(400).send({error: 'Password incorrect'})
+    else {
+        res.status(400).send({ error: 'Password incorrect' })
     }
 })
 
@@ -589,41 +603,41 @@ app.post('/api/crypto', async (req, res) => {
 
 
 app.post('/api/set_password', async (req, res) => {
-    if(password === ''){
+    if (password === '') {
         password = req.body.password
         writeFileSync(passwordPath, password, 'utf-8')
-        res.send({status: 'success'})
+        res.send({ status: 'success' })
     }
-    else{
+    else {
         res.status(400).send("already set")
     }
 })
 
 app.get('/api/read', async (req, res, next) => {
-    if(!await checkAuth(req, res)){
+    if (!await checkAuth(req, res)) {
         return;
     }
     const filePath = req.headers['file-path'];
     if (!filePath) {
         console.log('no path')
         res.status(400).send({
-            error:'File path required'
+            error: 'File path required'
         });
         return;
     }
 
-    if(!isHex(filePath)){
+    if (!isHex(filePath)) {
         res.status(400).send({
-            error:'Invaild Path'
+            error: 'Invaild Path'
         });
         return;
     }
     try {
-        if(!existsSync(path.join(savePath, filePath))){
+        if (!existsSync(path.join(savePath, filePath))) {
             res.send();
         }
-        else{
-            res.setHeader('Content-Type','application/octet-stream');
+        else {
+            res.setHeader('Content-Type', 'application/octet-stream');
             res.sendFile(path.join(savePath, filePath));
         }
     } catch (error) {
@@ -632,19 +646,19 @@ app.get('/api/read', async (req, res, next) => {
 });
 
 app.get('/api/remove', async (req, res, next) => {
-    if(!await checkAuth(req, res)){
+    if (!await checkAuth(req, res)) {
         return;
     }
     const filePath = req.headers['file-path'];
     if (!filePath) {
         res.status(400).send({
-            error:'File path required'
+            error: 'File path required'
         });
         return;
     }
-    if(!isHex(filePath)){
+    if (!isHex(filePath)) {
         res.status(400).send({
-            error:'Invaild Path'
+            error: 'Invaild Path'
         });
         return;
     }
@@ -660,7 +674,7 @@ app.get('/api/remove', async (req, res, next) => {
 });
 
 app.get('/api/list', async (req, res, next) => {
-    if(!await checkAuth(req, res)){
+    if (!await checkAuth(req, res)) {
         return;
     }
     try {
@@ -691,7 +705,7 @@ app.get('/api/patch/status', async (req, res) => {
 });
 
 app.post('/api/patch', async (req, res, next) => {
-    if(!await checkAuth(req, res)){
+    if (!await checkAuth(req, res)) {
         return;
     }
 
@@ -773,20 +787,20 @@ app.post('/api/patch', async (req, res, next) => {
 });
 
 app.post('/api/write', async (req, res, next) => {
-    if(!await checkAuth(req, res)){
+    if (!await checkAuth(req, res)) {
         return;
     }
     const filePath = req.headers['file-path'];
     const fileContent = req.body
     if (!filePath || !fileContent) {
         res.status(400).send({
-            error:'File path required'
+            error: 'File path required'
         });
         return;
     }
-    if(!isHex(filePath)){
+    if (!isHex(filePath)) {
         res.status(400).send({
-            error:'Invaild Path'
+            error: 'Invaild Path'
         });
         return;
     }
@@ -809,15 +823,15 @@ const oauthData = {
 
 }
 app.get('/api/oauth_login', async (req, res) => {
-    const redirect_uri = (new URL (req.url)).host + '/api/oauth_callback'
+    const redirect_uri = (new URL(req.url)).host + '/api/oauth_callback'
 
-    if(!redirect_uri){
+    if (!redirect_uri) {
         res.status(400).send({ error: 'redirect_uri is required' });
         return
     }
-    if(!oauthData.client_id || !oauthData.client_secret){
+    if (!oauthData.client_id || !oauthData.client_secret) {
         const openidMod = await openid();
-        const discovery = await openidMod.discovery('https://account.sionyw.com/','','');
+        const discovery = await openidMod.discovery('https://account.sionyw.com/', '', '');
         oauthData.config = discovery;
 
         //oauth dynamic client registration
@@ -843,14 +857,14 @@ app.get('/api/oauth_login', async (req, res) => {
             })
         });
 
-        if(registrationResponse.status === 201 || registrationResponse.status === 200){
+        if (registrationResponse.status === 201 || registrationResponse.status === 200) {
             const registrationData = await registrationResponse.json();
             oauthData.client_id = registrationData.client_id;
             oauthData.client_secret = registrationData.client_secret;
             discovery.clientMetadata().client_id = oauthData.client_id;
             discovery.clientMetadata().client_secret = oauthData.client_secret;
         }
-        else{
+        else {
             console.error('[Server] OAuth2 dynamic client registration failed:', registrationResponse.statusText);
             res.status(500).send({ error: 'OAuth2 client registration failed' });
             return
@@ -876,7 +890,7 @@ app.get('/api/oauth_login', async (req, res) => {
         return;
 
     }
-    
+
     res.status(500).send({ error: 'OAuth2 login failed' });
 });
 
@@ -887,18 +901,18 @@ app.get('/api/oauth_callback', async (req, res) => {
     const params = (new URL(req.url, `http://${req.headers.host}`)).searchParams;
     const code = params.get('code');
 
-    if(!code){
+    if (!code) {
         res.status(400).send({ error: 'code is required' });
         return
     }
-    if(!oauthData.client_id || !oauthData.client_secret || !oauthData.code_verifier){
+    if (!oauthData.client_id || !oauthData.client_secret || !oauthData.code_verifier) {
         res.status(400).send({ error: 'OAuth2 not initialized' });
         return
     }
 
     const openidMod3 = await openid();
     let tokens = await openidMod3.authorizationCodeGrant(
-        oauthData.config,   
+        oauthData.config,
         getCurrentUrl(),
         {
             pkceCodeVerifier: oauthData.code_verifier,
@@ -908,7 +922,7 @@ app.get('/api/oauth_callback', async (req, res) => {
     fs.writeFileSync(authCodePath, tokens.access_token, 'utf-8')
 
     res.send(tokens)
-            
+
 })
 
 async function getHttpsOptions() {
@@ -917,7 +931,7 @@ async function getHttpsOptions() {
     const certPath = path.join(sslPath, 'server.crt');
 
     try {
- 
+
         await fs.access(keyPath);
         await fs.access(certPath);
 
@@ -925,7 +939,7 @@ async function getHttpsOptions() {
             fs.readFile(keyPath),
             fs.readFile(certPath)
         ]);
-       
+
         return { key, cert };
 
     } catch (error) {
@@ -937,7 +951,7 @@ async function getHttpsOptions() {
 
 async function startServer() {
     try {
-      
+
         const port = process.env.PORT || 6001;
         const httpsOptions = await getHttpsOptions();
 
