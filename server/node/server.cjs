@@ -5,6 +5,7 @@ const htmlparser = require('node-html-parser');
 const { existsSync, mkdirSync, readFileSync, writeFileSync } = require('fs');
 const fs = require('fs/promises')
 const nodeCrypto = require('crypto')
+const fastJsonPatch = require('fast-json-patch');
 app.use(express.static(path.join(process.cwd(), 'dist'), {index: false}));
 app.use(express.json({ limit: '100mb' }));
 app.use(express.raw({ type: 'application/octet-stream', limit: '100mb' }));
@@ -13,7 +14,70 @@ const {pipeline} = require('stream/promises')
 const https = require('https');
 const sslPath = path.join(process.cwd(), 'server/node/ssl/certificate');
 const hubURL = 'https://sv.risuai.xyz'; 
-const openid = require('openid-client');
+const openid = (() => {
+    let _mod = null;
+    return async () => {
+        if (!_mod) _mod = await import('openid-client');
+        return _mod;
+    };
+})();
+
+// --- Node.js Version Guard for patch support ---
+const nodeVersion = process.version;
+const nodeVersionMatch = nodeVersion.match(/^v(\d+)\.(\d+)\.(\d+)/);
+const nodeMajor = nodeVersionMatch ? parseInt(nodeVersionMatch[1]) : 0;
+const nodeMinor = nodeVersionMatch ? parseInt(nodeVersionMatch[2]) : 0;
+const nodePatch = nodeVersionMatch ? parseInt(nodeVersionMatch[3]) : 0;
+const patchDisabledByVersion = (
+    (nodeMajor === 22 && nodeMinor >= 7) ||
+    (nodeMajor >= 23)
+);
+if (patchDisabledByVersion) {
+    console.warn(`[Server] WARNING: Patch-based sync is disabled on Node.js ${nodeVersion} due to known msgpackr encoding issues.`);
+    console.warn(`[Server] Please use Node.js v22.6.x or earlier for optimal performance.`);
+}
+
+// --- In-memory file cache for patch operations ---
+const inMemoryFileCache = new Map(); // filename -> { data: object, hash: string }
+const pendingWrites = new Map(); // filename -> timeout ID
+const DEBOUNCE_MS = 5000;
+
+function normalizeJSON(obj) {
+    if (obj === null || typeof obj !== 'object') return obj;
+    if (Array.isArray(obj)) return obj.map(normalizeJSON);
+    const sorted = {};
+    for (const key of Object.keys(obj).sort()) {
+        sorted[key] = normalizeJSON(obj[key]);
+    }
+    return sorted;
+}
+
+function calculateHashSync(data) {
+    const normalized = JSON.stringify(normalizeJSON(data));
+    return nodeCrypto.createHash('sha256').update(normalized, 'utf-8').digest('hex');
+}
+
+async function debouncedWrite(filename, data) {
+    const hexFilename = Buffer.from(filename, 'utf-8').toString('hex');
+    if (pendingWrites.has(filename)) {
+        clearTimeout(pendingWrites.get(filename));
+    }
+    pendingWrites.set(filename, setTimeout(async () => {
+        try {
+            const encoded = Buffer.from(JSON.stringify(data), 'utf-8');
+            await fs.writeFile(path.join(savePath, hexFilename), encoded);
+            // Auto-create backup
+            const backupName = `database/dbbackup-${(Date.now() / 100).toFixed()}.bin`;
+            const hexBackup = Buffer.from(backupName, 'utf-8').toString('hex');
+            await fs.writeFile(path.join(savePath, hexBackup), encoded);
+            console.log(`[Patch] Debounced write completed for: ${filename}`);
+        } catch (err) {
+            console.error(`[Patch] Debounced write error for ${filename}:`, err);
+        } finally {
+            pendingWrites.delete(filename);
+        }
+    }, DEBOUNCE_MS));
+}
 
 let password = ''
 let knownPublicKeysHashes = []
@@ -600,15 +664,111 @@ app.get('/api/list', async (req, res, next) => {
         return;
     }
     try {
+        const prefix = req.query.prefix || '';
         const data = (await fs.readdir(path.join(savePath))).map((v) => {
             return Buffer.from(v, 'hex').toString('utf-8')
-        })
+        }).filter((v) => {
+            if (prefix) {
+                return v.startsWith(prefix);
+            }
+            return true;
+        });
         res.send({
             success: true,
             content: data
         });
     } catch (error) {
         next(error);
+    }
+});
+
+app.get('/api/patch/status', async (req, res) => {
+    res.send({
+        enabled: !patchDisabledByVersion,
+        nodeVersion: nodeVersion,
+        reason: patchDisabledByVersion ? 'Node.js version not supported for patch operations' : null
+    });
+});
+
+app.post('/api/patch', async (req, res, next) => {
+    if(!await checkAuth(req, res)){
+        return;
+    }
+
+    if (patchDisabledByVersion) {
+        res.status(501).send({ error: 'Patch operations disabled on this Node.js version', nodeVersion });
+        return;
+    }
+
+    try {
+        const { filename, patch, expectedHash } = req.body;
+
+        if (!filename || !patch || !expectedHash) {
+            res.status(400).send({ error: 'filename, patch, and expectedHash are required' });
+            return;
+        }
+
+        if (!isHex(Buffer.from(filename, 'utf-8').toString('hex'))) {
+            res.status(400).send({ error: 'Invalid filename' });
+            return;
+        }
+
+        const hexFilename = Buffer.from(filename, 'utf-8').toString('hex');
+        const filePath = path.join(savePath, hexFilename);
+
+        // Load current data into cache if not present
+        let currentData;
+        if (inMemoryFileCache.has(filename)) {
+            currentData = inMemoryFileCache.get(filename).data;
+        } else {
+            if (!existsSync(filePath)) {
+                res.status(404).send({ error: 'File not found, full save required' });
+                return;
+            }
+            const raw = await fs.readFile(filePath, 'utf-8');
+            try {
+                currentData = JSON.parse(raw);
+            } catch (e) {
+                res.status(400).send({ error: 'Existing file is not valid JSON, full save required' });
+                return;
+            }
+        }
+
+        // Apply patch
+        const patchResult = fastJsonPatch.applyPatch(currentData, patch, true, false);
+        const patchedData = patchResult.newDocument;
+
+        // Verify hash
+        const serverHash = calculateHashSync(patchedData);
+        if (serverHash !== expectedHash) {
+            // Invalidate cache on mismatch
+            inMemoryFileCache.delete(filename);
+            res.status(409).send({
+                error: 'Hash mismatch',
+                serverHash,
+                expectedHash,
+                message: 'Data integrity check failed. Please perform a full save.'
+            });
+            return;
+        }
+
+        // Update in-memory cache
+        inMemoryFileCache.set(filename, { data: patchedData, hash: serverHash });
+
+        // Debounced disk write + backup
+        await debouncedWrite(filename, patchedData);
+
+        res.send({
+            success: true,
+            hash: serverHash
+        });
+    } catch (error) {
+        console.error('[Patch] Error:', error);
+        // Invalidate cache on error
+        if (req.body && req.body.filename) {
+            inMemoryFileCache.delete(req.body.filename);
+        }
+        res.status(500).send({ error: 'Patch operation failed: ' + error.message });
     }
 });
 
@@ -656,7 +816,8 @@ app.get('/api/oauth_login', async (req, res) => {
         return
     }
     if(!oauthData.client_id || !oauthData.client_secret){
-        const discovery = await openid.discovery('https://account.sionyw.com/','','');
+        const openidMod = await openid();
+        const discovery = await openidMod.discovery('https://account.sionyw.com/','','');
         oauthData.config = discovery;
 
         //oauth dynamic client registration
@@ -698,11 +859,12 @@ app.get('/api/oauth_login', async (req, res) => {
 
         //now lets request
 
-        let code_verifier = openid.randomPKCECodeVerifier();
-        let code_challenge = await openid.calculatePKCECodeChallenge(code_verifier);
+        const openidMod2 = await openid();
+        let code_verifier = openidMod2.randomPKCECodeVerifier();
+        let code_challenge = await openidMod2.calculatePKCECodeChallenge(code_verifier);
 
         oauthData.code_verifier = code_verifier;
-        let redirectTo = openid.buildAuthorizationUrl(oauthData.config, {
+        let redirectTo = openidMod2.buildAuthorizationUrl(oauthData.config, {
             redirect_uri,
             code_challenge,
             code_challenge_method: 'S256',
@@ -734,7 +896,8 @@ app.get('/api/oauth_callback', async (req, res) => {
         return
     }
 
-    let tokens = await openid.authorizationCodeGrant(
+    const openidMod3 = await openid();
+    let tokens = await openidMod3.authorizationCodeGrant(
         oauthData.config,   
         getCurrentUrl(),
         {

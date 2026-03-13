@@ -1,6 +1,7 @@
 import { language } from "src/lang"
 import { alertError, alertInput, waitAlert } from "../alert"
 import { base64url, getKeypairStore, saveKeypairStore } from "../util"
+import type { Operation } from 'fast-json-patch'
 
 
 export class NodeStorage{
@@ -188,6 +189,92 @@ export class NodeStorage{
     }
 
     listItem = this.keys
+
+    private patchSupportCache: boolean | null = null;
+
+    /**
+     * Check if the server supports patch operations.
+     * Caches the result for subsequent calls.
+     */
+    async checkPatchSupport(): Promise<boolean> {
+        if (this.patchSupportCache !== null) {
+            return this.patchSupportCache;
+        }
+        try {
+            const da = await fetch('/api/patch/status', {
+                method: 'GET'
+            });
+            if (da.status >= 200 && da.status < 300) {
+                const data = await da.json();
+                this.patchSupportCache = data.enabled === true;
+                if (!this.patchSupportCache) {
+                    console.warn(`[NodeStorage] Patch disabled by server: ${data.reason}`);
+                }
+                return this.patchSupportCache;
+            }
+        } catch (error) {
+            console.warn('[NodeStorage] Could not check patch support:', error);
+        }
+        this.patchSupportCache = false;
+        return false;
+    }
+
+    /**
+     * Send a JSON patch to the server.
+     * Returns the server hash on success, or null on failure (hash mismatch, etc).
+     */
+    async patchItem(filename: string, patch: Operation[], expectedHash: string): Promise<string | null> {
+        await this.checkAuth();
+        try {
+            const da = await fetch('/api/patch', {
+                method: 'POST',
+                body: JSON.stringify({ filename, patch, expectedHash }),
+                headers: {
+                    'content-type': 'application/json',
+                    'risu-auth': await this.createAuth()
+                }
+            });
+            if (da.status === 409) {
+                console.warn('[NodeStorage] Patch hash mismatch, full save required');
+                return null;
+            }
+            if (da.status === 501) {
+                console.warn('[NodeStorage] Patch not supported by server');
+                this.patchSupportCache = false;
+                return null;
+            }
+            if (da.status < 200 || da.status >= 300) {
+                console.error('[NodeStorage] Patch failed with status:', da.status);
+                return null;
+            }
+            const data = await da.json();
+            return data.hash || null;
+        } catch (error) {
+            console.error('[NodeStorage] Patch request error:', error);
+            return null;
+        }
+    }
+
+    /**
+     * List files with a specific prefix filter.
+     */
+    async listItemsWithPrefix(prefix: string): Promise<string[]> {
+        await this.checkAuth();
+        const da = await fetch(`/api/list?prefix=${encodeURIComponent(prefix)}`, {
+            method: 'GET',
+            headers: {
+                'risu-auth': await this.createAuth()
+            }
+        });
+        if (da.status < 200 || da.status >= 300) {
+            throw 'listItemsWithPrefix Error';
+        }
+        const data = await da.json();
+        if (data.error) {
+            throw data.error;
+        }
+        return data.content;
+    }
 }
 
 async function digestPassword(message:string) {

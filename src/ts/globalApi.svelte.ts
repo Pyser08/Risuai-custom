@@ -25,7 +25,9 @@ import { characterURLImport, hubURL } from "./characterCards";
 import { defaultJailbreak, defaultMainPrompt, oldJailbreak, oldMainPrompt } from "./storage/defaultPrompts";
 import { loadRisuAccountData } from "./drive/accounter";
 import { decodeRisuSave, encodeRisuSaveLegacy, RisuSaveEncoder, type toSaveType } from "./storage/risuSave";
+import { RisuSavePatcher } from "./storage/risuSavePatcher";
 import { AutoStorage } from "./storage/autoStorage";
+import { NodeStorage } from "./storage/nodeStorage";
 import { updateAnimationSpeed } from "./gui/animation";
 import { updateColorScheme, updateTextThemeAndCSS } from "./gui/colorscheme";
 import { autoServerBackup, saveDbKei } from "./kei/backup";
@@ -380,6 +382,33 @@ export async function saveDb() {
 
     let savetrys = 0
     let lastDbData = new Uint8Array(0)
+
+    // --- Patch-based save setup for Node server ---
+    let patcher: RisuSavePatcher | null = null;
+    let patchSupported = false;
+    let usePatchSave = false;
+
+    if (isNodeServer && !forageStorage.isAccount) {
+        try {
+            const nodeStorage = new NodeStorage();
+            patchSupported = await nodeStorage.checkPatchSupport();
+            if (patchSupported) {
+                patcher = new RisuSavePatcher();
+                const seedData = await patcher.init(getDatabase());
+                usePatchSave = true;
+                console.log('[saveDb] Patch-based save enabled. Seeding initial files...');
+                // Seed initial data to server
+                for (const [blockName, blockData] of seedData.entries()) {
+                    const uint8Data = new TextEncoder().encode(JSON.stringify(blockData));
+                    await nodeStorage.setItem(`database/${blockName}.json`, uint8Data);
+                }
+                console.log('[saveDb] Seeding complete.');
+            }
+        } catch (e) {
+            console.warn('[saveDb] Failed to initialize patcher, using full save:', e);
+        }
+    }
+
     await sleep(1000)
     while (true) {
         if (!changed) {
@@ -398,6 +427,18 @@ export async function saveDb() {
                     skipRemoteSavingOnCharacters: false
                 })
                 requiresFullEncoderReload.state = false
+                // Re-init patcher on full reload
+                if (patcher) {
+                    patcher.reset();
+                    const seedData = await patcher.init(getDatabase());
+                    if (isNodeServer && !forageStorage.isAccount) {
+                        const nodeStorage = new NodeStorage();
+                        for (const [blockName, blockData] of seedData.entries()) {
+                            const uint8Data = new TextEncoder().encode(JSON.stringify(blockData));
+                            await nodeStorage.setItem(`database/${blockName}.json`, uint8Data);
+                        }
+                    }
+                }
             }
 
             let toSave = safeStructuredClone(changeTracker)
@@ -419,27 +460,85 @@ export async function saveDb() {
                 continue
             }
 
-            await encoder.set(db, toSave)
-            const encoded = encoder.encode()
-            if (!encoded) {
-                await sleep(1000)
-                continue
+            // --- Try patch-based save for NodeServer ---
+            let patchSaveSuccess = false;
+            if (usePatchSave && patcher && isNodeServer && !forageStorage.isAccount) {
+                try {
+                    const patches = await patcher.generatePatches(db, toSave);
+                    if (patches && patches.length > 0) {
+                        const nodeStorage = new NodeStorage();
+                        let allPatchesSucceeded = true;
+                        for (const p of patches) {
+                            const filename = `database/${p.blockName}.json`;
+                            const result = await nodeStorage.patchItem(filename, p.patch, p.expectedHash);
+                            if (result === null) {
+                                // Hash mismatch or server error - fallback to full save
+                                allPatchesSucceeded = false;
+                                console.warn(`[saveDb] Patch failed for block ${p.blockName}, falling back to full save`);
+                                patcher.invalidateBlock(p.blockName);
+                                break;
+                            }
+                        }
+                        if (allPatchesSucceeded) {
+                            patchSaveSuccess = true;
+                        }
+                    } else if (patches && patches.length === 0) {
+                        // No changes - skip save
+                        patchSaveSuccess = true;
+                    }
+                    // patches === null means patcher couldn't generate (new character etc), fall through to full save
+                } catch (e) {
+                    console.warn('[saveDb] Patch save error, falling back to full save:', e);
+                    patcher.reset();
+                    const seedData = await patcher.init(db);
+                    if (isNodeServer && !forageStorage.isAccount) {
+                        const nodeStorage = new NodeStorage();
+                        for (const [blockName, blockData] of seedData.entries()) {
+                            const uint8Data = new TextEncoder().encode(JSON.stringify(blockData));
+                            await nodeStorage.setItem(`database/${blockName}.json`, uint8Data);
+                        }
+                    }
+                }
             }
-            const dbData = new Uint8Array(encoded)
-            if (isTauri) {
-                await writeFile('database/database.bin', dbData, { baseDir: BaseDirectory.AppData });
-                await writeFile(`database/dbbackup-${(Date.now() / 100).toFixed()}.bin`, dbData, { baseDir: BaseDirectory.AppData });
-            }
-            else {
 
-                await forageStorage.setItem('database/database.bin', dbData)
-                if (!forageStorage.isAccount) {
-                    await forageStorage.setItem(`database/dbbackup-${(Date.now() / 100).toFixed()}.bin`, dbData)
+            // --- Full save (original or fallback) ---
+            if (!patchSaveSuccess) {
+                await encoder.set(db, toSave)
+                const encoded = encoder.encode()
+                if (!encoded) {
+                    await sleep(1000)
+                    continue
                 }
-                if (forageStorage.isAccount) {
-                    await sleep(3000)
+                const dbData = new Uint8Array(encoded)
+                if (isTauri) {
+                    await writeFile('database/database.bin', dbData, { baseDir: BaseDirectory.AppData });
+                    await writeFile(`database/dbbackup-${(Date.now() / 100).toFixed()}.bin`, dbData, { baseDir: BaseDirectory.AppData });
+                }
+                else {
+
+                    await forageStorage.setItem('database/database.bin', dbData)
+                    if (!forageStorage.isAccount) {
+                        await forageStorage.setItem(`database/dbbackup-${(Date.now() / 100).toFixed()}.bin`, dbData)
+                    }
+                    if (forageStorage.isAccount) {
+                        await sleep(3000)
+                    }
+                }
+
+                // Re-sync patcher state after full save
+                if (patcher) {
+                    patcher.reset();
+                    const seedData = await patcher.init(db);
+                    if (isNodeServer && !forageStorage.isAccount) {
+                        const nodeStorage = new NodeStorage();
+                        for (const [blockName, blockData] of seedData.entries()) {
+                            const uint8Data = new TextEncoder().encode(JSON.stringify(blockData));
+                            await nodeStorage.setItem(`database/${blockName}.json`, uint8Data);
+                        }
+                    }
                 }
             }
+
             if (!forageStorage.isAccount) {
                 await getDbBackups()
             }
@@ -488,7 +587,17 @@ export async function getDbBackups() {
         return backups
     }
     else {
-        const keys = await forageStorage.keys()
+        let keys: string[];
+        // Use prefix-based filtering for NodeServer to reduce traffic
+        if (isNodeServer && forageStorage.realStorage instanceof NodeStorage) {
+            try {
+                keys = await (forageStorage.realStorage as NodeStorage).listItemsWithPrefix('database/dbbackup-');
+            } catch (e) {
+                keys = await forageStorage.keys();
+            }
+        } else {
+            keys = await forageStorage.keys();
+        }
 
         const backups = keys
             .filter(key => key.startsWith('database/dbbackup-'))
